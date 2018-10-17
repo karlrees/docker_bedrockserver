@@ -1,0 +1,49 @@
+version: '3.4'
+
+x-mcserver-common:
+  &default-mcserver
+  build: 
+   context: .
+   args:
+    INSTALLERURL: ${INSTALLERURL:-https://minecraft.azureedge.net/bin-linux/bedrock-server-1.7.0.13.zip}
+  image: ${DOCKERIMAGENAME:-karlrees/docker_bedrockserver}
+  volumes:
+  - ${WORLDSFOLDER:-./worlds}:/srv/bedrockserver/worlds
+  restart: always
+
+networks:
+ default:
+  driver: macvlan
+  driver_opts:
+   parent: ${NETWORKINTERFACE:-eth0}
+  ipam:
+   config:
+   - subnet: ${IPPREFIX:-192.168.0}.0/24
+
+#for each server, copy and paste one of the example servers
+#be sure to change the name and last three digits of IP address
+
+services:
+ 
+ #first server
+ doughnut:
+  << : *default-mcserver
+  environment:
+   WORLD: doughnut
+  container_name: doughnut
+  networks: 
+   default:
+    ipv4_address: ${IPPREFIX:-192.168.0}.201
+ 
+ #second server
+ bob:
+  << : *default-mcserver
+  environment:
+   WORLD: bob
+  container_name: bob
+  networks: 
+   default:
+    ipv4_address: ${IPPREFIX:-192.168.0}.202
+
+
+
