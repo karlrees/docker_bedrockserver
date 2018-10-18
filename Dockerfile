@@ -17,9 +17,9 @@ RUN apt-get install -y curl unzip
 VOLUME $MCSERVERFOLDER/worlds
 
 # install minecraft
-RUN curl $INSTALLERURL --output minecraft.zip
-RUN unzip minecraft.zip -d $MCSERVERFOLDER
-RUN rm minecraft.zip
+RUN curl $INSTALLERURL --output mc.zip
+RUN unzip mc.zip -d $MCSERVERFOLDER
+RUN rm mc.zip
 
 # copy over server properties template
 COPY server.properties.template $MCSERVERFOLDER/server.properties.template

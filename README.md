@@ -26,7 +26,7 @@ This worked well for a single server, but my kids each have their own worlds the
 1. Pull the docker image.
 
 ```
-docker pull karlrees/mcserver_docker_archsystemd
+docker pull karlrees/docker_bedrockserver
 ```
 
 2. Start the docker container.
@@ -35,21 +35,21 @@ docker pull karlrees/mcserver_docker_archsystemd
 docker run -d --network="host" karlrees/docker_bedrockserver
 ```
 
-Unfortunately, I'm not entirely sure I understand how docker volumes work.  I think it's possible that with the above, *you may lose your world* if you ever have to update the docker image (e.g. for a new server version).  One way to get around this, *may* be to give a fixed name the worlds folder as follows:
+Unfortunately, I'm not entirely sure I understand how docker volumes work.  I think it's probable that with the above, *you will lose your world* if you ever have to create a new container or update the docker image (e.g. for a new server version).  One way to get around this, *may* be to give a fixed name the worlds folder as follows:
 
 ```
 docker run -d --network="host" -v worlds:/srv/bedrockserver/worlds karlrees/docker_bedrockserver
 ```
 
-I'm not confident enough with that solution, however, to rely on it myself.  Instead, I would mount a worlds folder from the host system as follows:
+It seems to work in a few test cases that I've tried, but I'm not confident enough with that solution, however, to rely on it myself.  Instead, I would mount a worlds folder from the host system as follows:
 
 ```
 docker run -d --network="host" -v /path/to/worlds/folder:/srv/bedrockserver/worlds karlrees/docker_bedrockserver
 ```
 
-Unfortunately, I can't get this to work with an external volume on Windows.  For some reason the server suffers a fatal error.  So you have to go with the second option instead. 
+This has the added benefit of giving you easy access to the worlds folder so that you can create backups.
 
-Unless someone has a better idea of how things work and would like to share it...
+Unfortunately, I can't get this to work with an external volume on Windows.  For some reason the server suffers a fatal error.  So you have to go with the second option instead.  Unless someone has a better idea of how things work and would like to share it...
 
 ### Single-server / Existing world
 
