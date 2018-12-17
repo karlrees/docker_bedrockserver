@@ -5,7 +5,7 @@ x-mcserver-common:
   build: 
    context: .
    args:
-    INSTALLERURL: ${INSTALLERURL:-https://minecraft.azureedge.net/bin-linux/bedrock-server-1.7.0.13.zip}
+    INSTALLERURL: ${INSTALLERURL:-https://minecraft.azureedge.net/bin-linux/bedrock-server-1.8.0.24.zip}
   image: ${DOCKERIMAGENAME:-karlrees/docker_bedrockserver}
   volumes:
   - ${WORLDSFOLDER:-./worlds}:/srv/bedrockserver/worlds
