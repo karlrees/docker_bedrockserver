@@ -22,4 +22,4 @@ echo "STARTING BEDROCKSERVER: ${WORLD} on ${HOSTNAME}:${MCPORT} ..."
 
 
 cd /${MCSERVERFOLDER}/
-exec LD_LIBRARY_PATH=. ./bedrock_server
+LD_LIBRARY_PATH=. exec ./bedrock_server
