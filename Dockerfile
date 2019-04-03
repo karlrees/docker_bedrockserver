@@ -10,21 +10,26 @@ ENV MCSERVERFOLDER=/srv/bedrockserver
 EXPOSE $MCPORT
 
 # install dependencies
-RUN apt-get update
+# RUN apt-get update
 RUN apt-get install -y curl unzip
 
 # create folders for minecraft resources
 VOLUME $MCSERVERFOLDER/worlds
 
 # install minecraft
-RUN curl $INSTALLERURL --output mc.zip
-RUN unzip mc.zip -d $MCSERVERFOLDER
-RUN rm mc.zip
+RUN curl $INSTALLERURL --output mc.zip && \
+  unzip mc.zip -d $MCSERVERFOLDER && \
+  rm mc.zip && \
+  chown -Rf 1000:0 $MCSERVERFOLDER
 
 # copy over server properties template
 COPY server.properties.template $MCSERVERFOLDER/server.properties.template
 
 # set up startup script
 COPY startup.sh /srv/bedrockserver/
-RUN chmod +x /srv/bedrockserver/startup.sh
+RUN chmod +x /srv/bedrockserver/startup.sh && \
+  chown 1000:0 /srv/bedrockserver/startup.sh
+
+USER 1000
+
 ENTRYPOINT ["/srv/bedrockserver/startup.sh"]
