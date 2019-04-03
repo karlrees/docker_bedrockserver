@@ -1,28 +1,25 @@
 #!/bin/bash
 
 # if world folder does not exist, create it
-mkdir -p -- "${MCSERVERFOLDER}/worlds/${WORLD}"
-
-# if no existing custom properties file, copt template over
-if ! [ -f "${MCSERVERFOLDER}/worlds/${WORLD}.properties" ]; then
- mv "${MCSERVERFOLDER}/server.properties.template" "/${MCSERVERFOLDER}/worlds/${WORLD}.properties"
+if [ ! -d "${MCSERVERFOLDER}/worlds/${WORLD}" ]
+then
+ mkdir -p -- "${MCSERVERFOLDER}/worlds/${WORLD}"
 fi
 
-# fix custom properties file world location
-sed -i -e "s/=world/=$WORLD/g" "${MCSERVERFOLDER}/worlds/${WORLD}.properties"
-
-# copy custom properties file to correct location
-cp "${MCSERVERFOLDER}/worlds/${WORLD}.properties" "${MCSERVERFOLDER}/server.properties"
-
-# change default server port
-sed -i -e "s/=19132/=$MCPORT/g" "${MCSERVERFOLDER}/server.properties"
-
-# old fix for permission problems, don't think I need it anymore
-# chmod -R 777 "${MCSERVERFOLDER}/worlds/${WORLD}"
+echo -e "server-port=19132\nlevel-name=world" > ${MCSERVERFOLDER}/server.properties
+for P in `printenv | grep '^MCPROP_'`
+do
+	echo $P
+	NAME=${P%%=*}
+	NAME=${NAME#*_}
+	NAME=`echo ${NAME} | tr '[:upper:]' '[:lower:]'`
+	NAME=`echo ${NAME} | tr "_" "-"`
+	TEMP=${P##*=}
+	echo "${NAME}=${TEMP}" >> ${MCSERVERFOLDER}/server.properties
+done
 
 echo "STARTING BEDROCKSERVER: ${WORLD} on ${HOSTNAME}:${MCPORT} ..."
 
 
 cd /${MCSERVERFOLDER}/
-LD_LIBRARY_PATH=. ./bedrock_server
-
+exec LD_LIBRARY_PATH=. ./bedrock_server
