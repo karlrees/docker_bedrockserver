@@ -21,15 +21,17 @@ VOLUME $MCSERVERFOLDER/worlds
 RUN curl $INSTALLERURL --output mc.zip && \
   unzip mc.zip -d $MCSERVERFOLDER && \
   rm mc.zip && \
-  chown -Rf 1000:0 $MCSERVERFOLDER
+  chown -Rf 1000:0 $MCSERVERFOLDER && \
+  chmod -Rf g=u $MCSERVERFOLDER
 
 # copy over server properties template
 COPY server.properties.template $MCSERVERFOLDER/server.properties.template
 
 # set up startup script
 COPY startup.sh /srv/bedrockserver/
-RUN chmod +x /srv/bedrockserver/startup.sh && \
-  chown 1000:0 /srv/bedrockserver/startup.sh
+RUN chmod +x $MCSERVERFOLDER/startup.sh && \
+  chmod -Rf g=u $MCSERVERFOLDER/startup.sh $MCSERVERFOLDER/server.properties.template && \
+  chown 1000:0 $MCSERVERFOLDER/startup.sh $MCSERVERFOLDER/server.properties.template
 
 USER 1000
 
