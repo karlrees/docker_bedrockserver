@@ -10,8 +10,9 @@ ENV MCSERVERFOLDER=/srv/bedrockserver
 EXPOSE $MCPORT
 
 # install dependencies
-# RUN apt-get update
-RUN apt-get install -y curl unzip
+RUN apt update && \
+  apt install -y curl unzip && \
+  apt clean
 
 # create folders for minecraft resources
 VOLUME $MCSERVERFOLDER/worlds
