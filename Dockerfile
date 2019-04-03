@@ -14,15 +14,17 @@ RUN apt update && \
   apt install -y curl unzip && \
   apt clean
 
-# create folders for minecraft resources
-VOLUME $MCSERVERFOLDER/worlds
-
 # install minecraft
 RUN curl $INSTALLERURL --output mc.zip && \
   unzip mc.zip -d $MCSERVERFOLDER && \
   rm mc.zip && \
+  mkdir $MCSERVERFOLDER/worlds && \
   chown -Rf 1000:0 $MCSERVERFOLDER && \
   chmod -Rf g=u $MCSERVERFOLDER
+
+
+# create folders for minecraft resources
+VOLUME $MCSERVERFOLDER/worlds
 
 # copy over server properties template
 COPY server.properties.template $MCSERVERFOLDER/server.properties.template
