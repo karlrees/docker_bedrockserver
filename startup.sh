@@ -49,7 +49,7 @@ done
 
 for d in development_behavior_packs development_resource_packs premium_cache treamtemts world_templates
 do
-	if ! [ -d ${MCVOLUME}/${d}" ]
+	if ! [ -d "${MCVOLUME}/${d}" ]
 	then
 		mkdir ${MCVOLUME}/${d}
 		chmod g=u ${MCVOLUME}/${d}
