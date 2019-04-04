@@ -6,6 +6,7 @@ ENV WORLD='default'
 ENV MCPORT=19132
 ARG INSTALLERURL=https://minecraft.azureedge.net/bin-linux/bedrock-server-1.10.0.7.zip
 ENV MCSERVERFOLDER=/srv/bedrockserver
+ENV MCVOLUME=/config
 
 EXPOSE $MCPORT
 
@@ -18,22 +19,22 @@ RUN apt update && \
 RUN curl $INSTALLERURL --output mc.zip && \
   unzip mc.zip -d $MCSERVERFOLDER && \
   rm mc.zip && \
-  mkdir $MCSERVERFOLDER/worlds && \
-  chown -Rf 1000:0 $MCSERVERFOLDER && \
-  chmod -Rf g=u $MCSERVERFOLDER
+  mkdir $MCSERVERFOLDER/worlds $MCVOLUME && \
+  chown -Rf 1000:0 $MCSERVERFOLDER MCVOLUME && \
+  chmod -Rf g=u $MCSERVERFOLDER MCVOLUME
 
 
 # create folders for minecraft resources
-VOLUME $MCSERVERFOLDER/worlds
+VOLUME $MCVOLUME
 
 # copy over server properties template
-COPY server.properties.template $MCSERVERFOLDER/server.properties.template
+# COPY server.properties.template $MCSERVERFOLDER/server.properties.template
 
 # set up startup script
 COPY startup.sh /srv/bedrockserver/
 RUN chmod +x $MCSERVERFOLDER/startup.sh && \
-  chmod -Rf g=u $MCSERVERFOLDER/startup.sh $MCSERVERFOLDER/server.properties.template && \
-  chown 1000:0 $MCSERVERFOLDER/startup.sh $MCSERVERFOLDER/server.properties.template
+  chmod -Rf g=u $MCSERVERFOLDER/startup.sh && \
+  chown 1000:0 $MCSERVERFOLDER/startup.sh
 
 USER 1000
 
