@@ -19,9 +19,10 @@ RUN apt update && \
 RUN curl $INSTALLERURL --output mc.zip && \
   unzip mc.zip -d $MCSERVERFOLDER && \
   rm mc.zip && \
-  mkdir $MCSERVERFOLDER/worlds $MCVOLUME && \
+  mkdir $MCSERVERFOLDER/default $MCVOLUME && \
   chown -Rf 1000:0 $MCSERVERFOLDER $MCVOLUME && \
-  chmod -Rf g=u $MCSERVERFOLDER $MCVOLUME
+  chmod -Rf g=u $MCSERVERFOLDER $MCVOLUME && \
+  for i in Debug_Log.txt permissions.json server.properties valid_known_packs.json behavior_packs definitions resource_packs structures;do mv $MCSERVERFOLDER/$i $MCSERVERFOLDER/default/;done
 
 
 # create folders for minecraft resources
