@@ -23,7 +23,7 @@ RUN curl $INSTALLERURL --output mc.zip && \
   chown -Rf 1000:0 $MCSERVERFOLDER $MCVOLUME && \
   chmod -Rf g=u $MCSERVERFOLDER $MCVOLUME && \
   rm ${MCSERVERFOLDER}/server.properties && \
-  for i in Debug_Log.txt permissions.json server.properties valid_known_packs.json behavior_packs definitions resource_packs structures;do mv $MCSERVERFOLDER/$i $MCSERVERFOLDER/default/$i;done
+  for i in permissions.json behavior_packs definitions resource_packs structures;do mv $MCSERVERFOLDER/$i $MCSERVERFOLDER/default/$i;done
 
 
 # create folders for minecraft resources
