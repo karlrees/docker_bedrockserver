@@ -20,17 +20,33 @@ done
 
 ln -s ${MCVOLUME}/server.properties ${MCSERVERFOLDER}/server.properties
 
-if ! [ -f "${MCVOLUME}/permissions.json" ]
-then
-	echo "[]" > ${MCVOLUME}/permissions.json
-fi
-ln -s ${MCVOLUME}/permissions.json ${MCSERVERFOLDER}/permissions.json
+for f in Debug_Log.txt permissions.json server.properties valid_known_packs.json whitelist.json
+do
+	if ! [ -f "${MCVOLUME}/${f}" ]
+	then
+		cp ${MCSERVERFOLDER}/default/${f} ${MCVOLUME}/${f}
+	fi
+	ln -s ${MCVOLUME}/${f} ${MCSERVERFOLDER}/${f}
+done
 
-if ! [ -f "${MCVOLUME}/whitelist.json" ]
-then
-	echo "[]" > ${MCVOLUME}/whitelist.json
-fi
-ln -s ${MCVOLUME}/whitelist.json ${MCSERVERFOLDER}/whitelist.json
+for d in behavior_packs definitions resource_packs structures worlds
+do
+	if ! [ -d "${MCVOLUME}/${d}" ]
+	then
+		cp -a ${MCSERVERFOLDER}/default/${d} ${MCVOLUME}/${d}
+	fi
+	ln -s ${MCVOLUME}/${d} ${MCSERVERFOLDER}/${d}
+done
+
+for d in development_behavior_packs development_resource_packs premium_cache treamtemts world_templates
+do
+	if ! [ -d ${MCVOLUME}/${d}" ]
+	then
+		mkdir ${MCVOLUME}/${d}
+		chmod g=u ${MCVOLUME}/${d}
+	fi
+	ln -s ${MCVOLUME}/${d} ${MCSERVERFOLDER}/${d}
+done
 
 echo "STARTING BEDROCKSERVER: ${WORLD} on ${HOSTNAME}:${MCPORT} ..."
 
