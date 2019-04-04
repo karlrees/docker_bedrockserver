@@ -20,7 +20,7 @@ done
 
 ln -s ${MCVOLUME}/server.properties ${MCSERVERFOLDER}/server.properties
 
-for f in Debug_Log.txt permissions.json server.properties valid_known_packs.json whitelist.json
+for f in Debug_Log.txt permissions.json valid_known_packs.json whitelist.json
 do
 	if ! [ -f "${MCVOLUME}/${f}" ]
 	then
