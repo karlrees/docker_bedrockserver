@@ -20,8 +20,8 @@ RUN curl $INSTALLERURL --output mc.zip && \
   unzip mc.zip -d $MCSERVERFOLDER && \
   rm mc.zip && \
   mkdir $MCSERVERFOLDER/worlds $MCVOLUME && \
-  chown -Rf 1000:0 $MCSERVERFOLDER MCVOLUME && \
-  chmod -Rf g=u $MCSERVERFOLDER MCVOLUME
+  chown -Rf 1000:0 $MCSERVERFOLDER $MCVOLUME && \
+  chmod -Rf g=u $MCSERVERFOLDER $MCVOLUME
 
 
 # create folders for minecraft resources
