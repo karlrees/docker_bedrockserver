@@ -20,11 +20,20 @@ done
 
 ln -s ${MCVOLUME}/server.properties ${MCSERVERFOLDER}/server.properties
 
-for f in Debug_Log.txt permissions.json valid_known_packs.json whitelist.json
+for f in permissions.json whitelist.json
 do
 	if ! [ -f "${MCVOLUME}/${f}" ]
 	then
 		cp ${MCSERVERFOLDER}/default/${f} ${MCVOLUME}/${f}
+	fi
+	ln -s ${MCVOLUME}/${f} ${MCSERVERFOLDER}/${f}
+done
+
+for f in Debug_Log.txt valid_known_packs.json
+do
+	if ! [ -f "${MCVOLUME}/${f}" ]
+	then
+		touch ${MCVOLUME}/${f}
 	fi
 	ln -s ${MCVOLUME}/${f} ${MCSERVERFOLDER}/${f}
 done
