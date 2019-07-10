@@ -89,6 +89,10 @@ docker-compose up -d
 
 *Sorry for any confusing instructions.  Just thought it'd be better to share with terse instructions than not at all.*
 
+## Custom permissions
+
+The startup script will copy the "worldname.permissions.json" file, if it exists (where "worldname" is the name of your world), into the image as the permissions.json file for the server.
+
 ## Known Issues
 
 Because of Windows permission difficulties, mounting external volumes for Minecraft worlds does not appear to work when using a Windows host.
