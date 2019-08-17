@@ -11,9 +11,10 @@ fi
 # fix custom properties file world location
 sed -i -e "s/=world/=$WORLD/g" "${MCSERVERFOLDER}/worlds/${WORLD}.properties"
 
-# copy custom properties and permissions files to correct location
+# copy custom properties, whitelist and permissions files to correct location
 cp "${MCSERVERFOLDER}/worlds/${WORLD}.properties" "${MCSERVERFOLDER}/server.properties"
 cp "${MCSERVERFOLDER}/worlds/${WORLD}.permissions.json" "${MCSERVERFOLDER}/permissions.json"
+cp "${MCSERVERFOLDER}/worlds/${WORLD}.whitelist.json" "${MCSERVERFOLDER}/whitelist.json"
 
 # change default server port
 sed -i -e "s/=19132/=$MCPORT/g" "${MCSERVERFOLDER}/server.properties"
