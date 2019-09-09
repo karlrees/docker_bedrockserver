@@ -31,6 +31,8 @@ services:
   environment:
    WORLD: doughnut
   container_name: doughnut
+  stdin_open: true
+  tty: true 
   networks: 
    default:
     ipv4_address: ${IPPREFIX:-192.168.0}.201
@@ -41,6 +43,8 @@ services:
   environment:
    WORLD: bob
   container_name: bob
+  stdin_open: true
+  tty: true 
   networks: 
    default:
     ipv4_address: ${IPPREFIX:-192.168.0}.202
