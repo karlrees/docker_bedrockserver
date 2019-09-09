@@ -1,6 +1,6 @@
 # Minecraft Server (Bedrock) for Docker
 
-A Docker image and docker-compose file to run one or more instances of a native Minecraft Bedrock server in minimal ubuntu environment.
+A Docker image and docker-compose file to run one or more instances of a native Minecraft Bedrock server in a minimal ubuntu environment.
 
 
 ## Background
