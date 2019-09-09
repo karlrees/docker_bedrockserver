@@ -1,6 +1,6 @@
 # Minecraft Server (Bedrock) for Docker
 
-A Docker image and docker-compose file to run one or more instances of a native Minecraft Bedrock server using codehz/mcpeserver in an ArchLinux environment wth systemd.
+A Docker image and docker-compose file to run one or more instances of a native Minecraft Bedrock server in minimal ubuntu environment.
 
 
 ## Background
@@ -8,8 +8,6 @@ A Docker image and docker-compose file to run one or more instances of a native 
 My kids wanted a Minecraft (Bedrock) server so that they can play the same worlds on any of their devices at home.  Fortunately, Minecraft finally released an alpha version of a server for Bedrock edition.  See https://minecraft.net/en-us/download/server/bedrock/.
 
 This worked well for a single server, but my kids each have their own worlds they want to serve, and they want to be able to bring these up and down quickly.  Long story short, for various reasons, I decided it was time to teach myself about Docker, and run the servers in a docker image.
-
-*So this is one of my first Docker projects.  Don't be too hard on me if I'm doing something terribly wrong.*
 
 
 ## Prerequisites
@@ -35,7 +33,7 @@ docker pull karlrees/docker_bedrockserver
 docker run -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
 ```
 
-Unfortunately, I'm not entirely sure I understand how docker volumes work.  I think it's probable that with the above, *you will lose your world* if you ever have to update the docker image (e.g. for a new server version).  One way to get around this, *may* be to give a fixed name the worlds folder as follows:
+Unfortunately, I think it's probable that with the above command, *you will lose your world* if you ever have to update the docker image (e.g. for a new server version).  One way to get around this, *may* be to give a fixed name the worlds folder as follows:
 
 ```
 docker run -dit --name="minecraft" --network="host" -v worlds:/srv/bedrockserver/worlds karlrees/docker_bedrockserver
@@ -49,7 +47,7 @@ docker run -dit --name="minecraft" --network="host" -v /path/to/worlds/folder:/s
 
 This has the added benefit of giving you easy access to the worlds folder so that you can create backups.
 
-Unfortunately, I can't get this to work with an external volume on Windows.  For some reason the server suffers a fatal error.  So you have to go with the second option instead.  Unless someone has a better idea of how things work and would like to share it...
+Unfortunately, I can't get this to work with an external volume on Windows.  For some reason the server suffers a fatal error.  So you have to go with the second option instead.  Unless someone has a better idea of how docker works and would like to share it...
 
 ### Single-server / Existing world
 
@@ -61,7 +59,7 @@ Unfortunately, I can't get this to work with an external volume on Windows.  For
 4. Create or locate a server.properties file for your world (see the example server.properties.template if you don't have one).
 5. Save the server.properties file as "worldname.properties" in the *"worlds"* folder, where worldname is the name of your "world" folder.
 6. Change the level-name attribute value from "world" to "worldname" (or whatever your "world" folder is named)
-7. Start docker container as shown below, replacing "worldname" with whatever your "world" folder is named, and "/path/to/world/folder" with the absolute path to your parent worlds folder:
+7. Start the docker container as shown below, replacing "worldname" with whatever your "world" folder is named, and "/path/to/world/folder" with the absolute path to your parent worlds folder:
 
 ```
 docker run -e WORLD=worldname -v /path/to/worlds/folder:/srv/mcpeserver/worlds -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
@@ -88,6 +86,7 @@ docker-compose up -d
 
 *Sorry for any confusing instructions.  Just thought it'd be better to share with terse instructions than not at all.*
 
+
 ## Custom permissions / whitelist
 
 The startup script will copy the "worldname.permissions.json" file, if it exists (where "worldname" is the name of your world), into the image as the permissions.json file for the server.  Similarly, the startup script will copy the "worldname.whitelist.json" file, if it exists (where "worldname" is the name of your world), into the image as the whitelist.json file for the server
@@ -106,7 +105,7 @@ You can then issue server commands, like "stop", "permission list", etc.
 
 To exit, enter "Ctrl-P" followed by "Ctrl-Q".
 
-## Restarting Server
+## Restarting the server
 
 If you stop the server (e.g. in the console), you can restart it with the following command, where "minecraft" is the container name.
 
