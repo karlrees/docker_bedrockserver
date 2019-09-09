@@ -79,7 +79,7 @@ git clone https://github.com/karlrees/docker_bedrockserver
 
 2. Complete steps 1-6 above, using the worlds folder in the source code as the parent "worlds" folder.  Repeat steps 3-6 for each world you wish to serve.
 3. Edit the ENV file as needed (e.g. change the IP Prefix to match your subnet, eth0 to match your network interface, etc.)
-4. Edit the docker-compose file to include a separate section for each server.  Be sure to change the name for each server to match what you used in step 2.  Be sure to use a different IP address or each server as well.
+4. Edit the docker-compose file to include a separate section for each server.  Be sure to change the name for each server to match what you used in step 2.  Be sure to use a different IP address for each server as well.
 5. Run docker-compose
 
 ```
@@ -94,11 +94,13 @@ The startup script will copy the "worldname.permissions.json" file, if it exists
 
 ## Accessing the server console
 
-To access the server console, you'll need to find your container name, which if you're using the single-server instructions above would be "minecraft."  If you're using docker-compose, the container name is in the docker-compose.yml file (e.g. minecraft1, minecraft2, etc.).
+To access the server console, if you're using the single-server instructions above:
 
 ```
 docker attach minecraft
 ```
+
+If you changed the container name in the run command, change "minecraft" to the container name you used.  If you're using docker-compose instructions, replace "minecraft" with the container name you specified in the "docker-compose.yml" file (e.g. minecraft1, minecraft2, etc.).
 
 You can then issue server commands, like "stop", "permission list", etc.
 
@@ -116,10 +118,16 @@ Note that the docker-compose file is set to automatically restart a server once 
 
 ## Minecraft Server updates
 
-For new updates to the server, you will need to remove the existing container and then repeat the above instructions.  This should theoretically be managed for you if you go the docker-compose route (docker-compose down).  For other installs:
+For new updates to the server, you will need to remove the existing container and then repeat the above instructions.  For the single-server instructions:
 
 ```
 docker rm minecraft
+```
+
+This should theoretically be managed for you if you go the docker-compose route:
+
+```
+docker-compose down
 ```
 
 ## Known Issues
