@@ -29,8 +29,8 @@ services:
  doughnut:
   << : *default-mcserver
   environment:
-   WORLD: doughnut
-  container_name: doughnut
+   WORLD: minecraft1
+  container_name: minecraft1
   stdin_open: true
   networks: 
    default:
@@ -40,8 +40,8 @@ services:
  bob:
   << : *default-mcserver
   environment:
-   WORLD: bob
-  container_name: bob
+   WORLD: minecraft2
+  container_name: minecraft2
   stdin_open: true
   networks: 
    default:
