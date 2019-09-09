@@ -15,7 +15,7 @@ This worked well for a single server, but my kids each have their own worlds the
 ## Prerequisites
 
 - Docker
-- docker-compose (if you want to use the instructions for  multiple servers)
+- docker-compose (if you want to use the instructions for multiple servers)
 
 ## Instructions
 
@@ -32,19 +32,19 @@ docker pull karlrees/docker_bedrockserver
 2. Start the docker container.
 
 ```
-docker run -d --network="host" karlrees/docker_bedrockserver
+docker run -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
 ```
 
-Unfortunately, I'm not entirely sure I understand how docker volumes work.  I think it's probable that with the above, *you will lose your world* if you ever have to create a new container or update the docker image (e.g. for a new server version).  One way to get around this, *may* be to give a fixed name the worlds folder as follows:
+Unfortunately, I'm not entirely sure I understand how docker volumes work.  I think it's probable that with the above, *you will lose your world* if you ever have to update the docker image (e.g. for a new server version).  One way to get around this, *may* be to give a fixed name the worlds folder as follows:
 
 ```
-docker run -d --network="host" -v worlds:/srv/bedrockserver/worlds karlrees/docker_bedrockserver
+docker run -dit --name="minecraft" --network="host" -v worlds:/srv/bedrockserver/worlds karlrees/docker_bedrockserver
 ```
 
 It seems to work in a few test cases that I've tried, but I'm not confident enough with that solution, however, to rely on it myself.  Instead, I would mount a worlds folder from the host system as follows:
 
 ```
-docker run -d --network="host" -v /path/to/worlds/folder:/srv/bedrockserver/worlds karlrees/docker_bedrockserver
+docker run -dit --name="minecraft" --network="host" -v /path/to/worlds/folder:/srv/bedrockserver/worlds karlrees/docker_bedrockserver
 ```
 
 This has the added benefit of giving you easy access to the worlds folder so that you can create backups.
@@ -64,7 +64,7 @@ Unfortunately, I can't get this to work with an external volume on Windows.  For
 7. Start docker container as shown below, replacing "worldname" with whatever your "world" folder is named, and "/path/to/world/folder" with the absolute path to your parent worlds folder:
 
 ```
-docker run -e WORLD=worldname -v /path/to/worlds/folder:/srv/mcpeserver/worlds -d --network="host" karlrees/docker_bedrockserver
+docker run -e WORLD=worldname -v /path/to/worlds/folder:/srv/mcpeserver/worlds -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
 ```
 
 ### Multiple existing worlds / docker-compose
@@ -86,12 +86,41 @@ git clone https://github.com/karlrees/docker_bedrockserver
 docker-compose up -d
 ```
 
-
 *Sorry for any confusing instructions.  Just thought it'd be better to share with terse instructions than not at all.*
 
-## Custom permissions
+## Custom permissions / whitelist
 
-The startup script will copy the "worldname.permissions.json" file, if it exists (where "worldname" is the name of your world), into the image as the permissions.json file for the server.
+The startup script will copy the "worldname.permissions.json" file, if it exists (where "worldname" is the name of your world), into the image as the permissions.json file for the server.  Similarly, the startup script will copy the "worldname.whitelist.json" file, if it exists (where "worldname" is the name of your world), into the image as the whitelist.json file for the server
+
+## Accessing the server console
+
+To access the server console, you'll need to find your container name, which if you're using the single-server instructions above would be "minecraft."  If you're using docker-compose, the container name is in the docker-compose.yml file (e.g. minecraft1, minecraft2, etc.).
+
+```
+docker attach minecraft
+```
+
+You can then issue server commands, like "stop", "permission list", etc.
+
+To exit, enter "Ctrl-P" followed by "Ctrl-Q".
+
+## Restarting Server
+
+If you stop the server (e.g. in the console), you can restart it with the following command, where "minecraft" is the container name.
+
+```
+docker start minecraft
+```
+
+Note that the docker-compose file is set to automatically restart a server once it goes down, so this command shouldn't be necessary unless you change the docker-compose file.
+
+## Minecraft Server updates
+
+For new updates to the server, you will need to remove the existing container and then repeat the above instructions.  This should theoretically be managed for you if you go the docker-compose route (docker-compose down).  For other installs:
+
+```
+docker rm minecraft
+```
 
 ## Known Issues
 
