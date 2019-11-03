@@ -4,7 +4,7 @@ ENV container docker
 # set minecraft world name and port and apk filename
 ENV WORLD='default'
 ENV MCPORT=19132
-ARG INSTALLERURL=https://minecraft.azureedge.net/bin-linux/bedrock-server-1.12.1.1.zip
+ARG INSTALLERURL=https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.0.34.zip
 ENV MCSERVERFOLDER=/srv/bedrockserver
 
 EXPOSE $MCPORT
