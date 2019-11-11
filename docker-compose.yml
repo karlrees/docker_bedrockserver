@@ -5,10 +5,10 @@ x-mcserver-common:
   build: 
    context: .
    args:
-    INSTALLERURL: ${INSTALLERURL:-https://minecraft.azureedge.net/bin-linux/bedrock-server-1.10.0.7.zip}
+    INSTALLERURL: ${INSTALLERURL:-https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.0.34.zip}
   image: ${DOCKERIMAGENAME:-karlrees/docker_bedrockserver}
   volumes:
-  - ${WORLDSFOLDER:-./worlds}:/srv/bedrockserver/worlds
+  - ${MCVOLUME:-./config}:/config
   restart: always
 
 networks:
@@ -26,21 +26,25 @@ networks:
 services:
  
  #first server
- doughnut:
+ minecraft1:
   << : *default-mcserver
   environment:
-   WORLD: doughnut
-  container_name: doughnut
+   WORLD: minecraft1
+  container_name: minecraft1
+  stdin_open: true
+  tty: true
   networks: 
    default:
     ipv4_address: ${IPPREFIX:-192.168.0}.201
  
  #second server
- bob:
+ minecraft2:
   << : *default-mcserver
   environment:
-   WORLD: bob
-  container_name: bob
+   WORLD: minecraft2
+  container_name: minecraft2
+  stdin_open: true
+  tty: true
   networks: 
    default:
     ipv4_address: ${IPPREFIX:-192.168.0}.202
