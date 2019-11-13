@@ -8,7 +8,7 @@ x-mcserver-common:
     INSTALLERURL: ${INSTALLERURL:-https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.0.34.zip}
   image: ${DOCKERIMAGENAME:-karlrees/docker_bedrockserver}
   volumes:
-  - ${WORLDSFOLDER:-./worlds}:/srv/bedrockserver/worlds
+  - ${MCVOLUME:-./config}:/config
   restart: always
 
 networks:
