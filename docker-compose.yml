@@ -31,7 +31,7 @@ services:
  minecraft1:
   << : *default-mcserver
   environment:
-   WORLD: minecraft1
+   WORLD: minecraft1   
   container_name: minecraft1
   networks: 
    default:
@@ -47,5 +47,26 @@ services:
    default:
     ipv4_address: ${IPPREFIX:-192.168.0}.202
 
+ #first server
+ minecraft3:
+  << : *default-mcserver
+  environment:
+   WORLD: minecraft3
+   MCPROP_GAMEMODE: 1   
+  container_name: minecraft3
+  networks: 
+   default:
+    ipv4_address: ${IPPREFIX:-192.168.0}.203
+ 
+ #second server
+ minecraft4:
+  << : *default-mcserver
+  environment:
+   WORLD: minecraft4
+   #MCPROP_GAMEMODE: 1
+  container_name: minecraft4
+  networks: 
+   default:
+    ipv4_address: ${IPPREFIX:-192.168.0}.204
 
 
