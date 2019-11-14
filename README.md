@@ -41,13 +41,13 @@ Unfortunately, I think it's probable that with the above command, *you will lose
 docker run -dit --name="minecraft" --network="host" -v config:/config karlrees/docker_bedrockserver
 ```
 
-It seems to work in a few test cases that I've tried, but I'm not confident enough with that solution, however, to rely on it myself.  Instead, I would mount a worlds folder from the host system as follows:
+It seems to work in a few test cases that I've tried, but I'm not confident enough with that solution, however, to rely on it myself.  Instead, I would mount a config folder from the host system as follows:
 
 ```
-docker run -dit --name="minecraft" --network="host" -v /path/to/config/folder:/config karlrees/docker_bedrockserver
+docker run -dit --name="minecraft" --network="host" -v /path/to/config:/config karlrees/docker_bedrockserver
 ```
 
-This has the added benefit of giving you easy access to the worlds folder so that you can create backups.
+This has the added benefit of giving you easy access to the config folder so that you can create backups.
 
 Unfortunately, I can't get this to work with an external volume on Windows.  For some reason the server suffers a fatal error.  So you have to go with the second option instead.  Unless someone has a better idea of how docker works and would like to share it...
 
@@ -55,21 +55,23 @@ Unfortunately, I can't get this to work with an external volume on Windows.  For
 
 *To build/run a single server using a pre-existing Bedrock world folder:*
 
-1. Create (or locate) a parent folder to store (or that already stores) your Minecraft worlds.  We'll refer this folder subsequently as the parent "worlds" folder.
-2. Locate the "world" folder that stores the existing Minecraft world data for the world you wish to serve.  This may or may not be named "world", but we'll refer to it subsequently as the "world" folder.
-3. Save the "world" under the parent "worlds" folder (if needed, using a different name to your liking).
-<!--4. Create or locate a server.properties file for your world (see the example server.properties.template if you don't have one).
-5. Save the server.properties file as "worldname.properties" in the *"worlds"* folder, where worldname is the name of your "world" folder.
-6. Change the level-name attribute value from "world" to "worldname" (or whatever your "world" folder is named)-->
-7. Start the docker container as shown below, replacing "worldname" with whatever your "world" folder is named, and "/path/to/world/folder" with the absolute path to your parent worlds folder:
+1. Create (or locate) a parent folder to store (or that already stores) your Minecraft data.  We'll refer this folder subsequently as the "config" folder.  You may use the supplied config folder from the repository, or any other suitable location.
+2. Create (or locate) a folder named "worlds" in the "config" folder.  We'll refer this folder subsequently as the "worlds" folder.   
+3. Locate the "world" folder that stores the existing Minecraft world data for the world you wish to serve.  This may or may not be named "world", but we'll refer to it subsequently as the "world" folder. 
+
+*You'll know this folder from the fact that it includes a file named "level.dat" and a subfolder named "db".  For instance, if you wanted to import a world from the Windows 10 Minecraft app, this would be a folder such as C:\Users\username\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\minecraftWorlds\xxx, where username is the name of your user account and xxx is typically a random set of characters.*
+
+3. Copy the "world" folder (which you can rename to something more descriptive if you wish) to the "worlds" folder.  *E.g. "/config/worlds/world".*
+
+4. Start the docker container as shown below, replacing "worldname" with whatever your "world" folder is named, and "/path/to/config" with the absolute path to your config folder:
 
 ```
-docker run -e WORLD=worldname -v /path/to/worlds/folder:/config -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
+docker run -e WORLD=worldname -v /path/to/config:/config -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
 ```
 
 ### Multiple existing worlds / docker-compose
 
-*To run multiple servers using multiple pre-existing Bedrock worlds, each running at a separate IP address:*
+*To run multiple servers using multiple Bedrock worlds, each running at a separate IP address:*
 
 1. Download the source code from git
 
@@ -77,9 +79,22 @@ docker run -e WORLD=worldname -v /path/to/worlds/folder:/config -dit --name="min
 git clone https://github.com/karlrees/docker_bedrockserver
 ```
 
-2. Complete steps 1-6 above, using the worlds folder in the source code as the parent "worlds" folder.  Repeat steps 3-6 for each world you wish to serve.
-3. Edit the ENV file as needed (e.g. change the IP Prefix to match your subnet, eth0 to match your network interface, etc.)
-4. Edit the docker-compose file to include a separate section for each server.  Be sure to change the name for each server to match what you used in step 2.  Be sure to use a different IP address for each server as well.
+2. Edit the ENV file (.env) as needed (e.g. change the IP Prefix to match your subnet, eth0 to match your network interface, etc.)
+3. Edit the docker-compose file to include a separate section for each server.  Be sure to change the name for each server--change both the container_name property and the WORLD environment variable.  Be sure to use a different IP address for each server as well.
+4. Run docker-compose
+
+```
+docker-compose up -d
+```
+
+### Multiple existing worlds / docker-compose
+
+*To run multiple servers using multiple pre-existing Bedrock worlds, each running at a separate IP address:*
+
+1. Download the source code from git.  See step 1 above.
+2. Complete steps 1-3 from the single-server / existing world instructions.  Repeat step 3 for each world you wish to serve.  Hence, you'd have a /config/worlds/world1 folder, a config/worlds/world2 folder, and so forth.
+3. Edit the ENV file (.env) as needed (e.g. change the IP Prefix to match your subnet, eth0 to match your network interface, etc.)
+4. Edit the docker-compose file to include a separate section for each server.  Be sure to change the name for each server to match what you used in step 2--change both the container_name property and the WORLD environment variable.  Also, be sure to use a different IP address for each server as well.
 5. Run docker-compose
 
 ```
@@ -89,6 +104,12 @@ docker-compose up -d
 ## Changing server properties
 
 Server properties may be changed using MCPROP_ environment variables, either passed through the command line, set in docker-compose file, or set in the .env file.  For instance, to change the gamemode to 1, one would set the MCPROP_GAMEMODE environment variable to 1.
+
+```
+docker run -e MCPROP_GAMEMODE=1 -e WORLD=worldname -v /path/to/worlds/folder:/config -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
+```
+
+Note that level-name is a special property that is set by the WORLD environment variable, as opposed to MCPROP_LEVEL-NAME.
 
 *Server properties may also be changed using a custom server.properties file, created using the method below.*
 
