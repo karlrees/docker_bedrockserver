@@ -111,11 +111,13 @@ docker run -e MCPROP_GAMEMODE=1 -e WORLD=worldname -v /path/to/worlds/folder:/co
 
 Note that level-name is a special property that is set by the WORLD environment variable, as opposed to MCPROP_LEVEL-NAME.
 
-*Server properties may also be changed using a custom server.properties file, created using the method below.*
+You will need to restart the container for the changes to take effect.  
+
+*Server properties may instead be changed using a custom worldname.server.properties file in the "config" folder, per the technique below.*
 
 ## Custom permissions / whitelist / resource files and folders
 
-You can change your permissions.json file, whitelist.json file, resource directories, and so forth, by mounting the /config folder to an external volume and making changes from there.  These are all linked to the appropriate locations on the server when the conatiner is started.
+You can change your permissions.json file, whitelist.json file, resource directories, and so forth, by mounting the /config folder to an external volume and making changes from there.  These are all linked to the appropriate locations on the server when the conatiner is started.  
 
 ### Multiple Servers
 
@@ -126,6 +128,8 @@ For instance, to create a separate permissions file for your world, create a fil
 Similarly, the startup script would copy the "worldname.whitelist.json" file, if it exists (where "worldname" is the name of your world), into the image as the whitelist.json file for the server.
 
 Or, for a custom resource_packs directory, rename it "worldname.resource_packs."
+
+You will need to restart the container for the changes to take effect.  
 
 ## Accessing the server console
 
