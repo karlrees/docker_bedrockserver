@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PATH=$PATH:${MCSERVERFOLDER}
+
 # if world folder does not exist, create it
 if [ ! -d "${MCVOLUME}/worlds/${WORLD}" ]
 then
