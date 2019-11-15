@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PATH=$PATH:${MCSERVERFOLDER}
+
 # if world folder does not exist, create it
 if [ ! -d "${MCVOLUME}/worlds/${WORLD}" ]
 then
@@ -121,6 +123,34 @@ done
 
 echo "STARTING BEDROCKSERVER: ${WORLD} on ${HOSTNAME}:${MCPORT} ..."
 
+mkfifo /tmp/mc-input
+cat > /tmp/mc-input &
+MC_INPUT_PID=$!
+
+########### SIG handler ############
+function _int() {
+   echo "Stopping container."
+   echo "SIGINT received, shutting down server!"
+   echo -e "stop\n" > /tmp/mc-input
+   while grep ^bedrock_server /proc/*/cmdline > /dev/null 2>&1
+   do
+     sleep 1
+   done
+   exit 0
+}
+
+# Set SIGINT handler
+trap _int SIGINT
+
+# Set SIGTERM handler
+trap _int SIGTERM
+
+# Set SIGKILL handler
+trap _int SIGKILL
+
 # cd to bin folder and exec to bedrock_server
 cd /${MCSERVERFOLDER}/
-LD_LIBRARY_PATH=. exec ./bedrock_server
+LD_LIBRARY_PATH=. tail -f /tmp/mc-input | bedrock_server &
+childPID=$!
+wait $childPID
+echo $?
