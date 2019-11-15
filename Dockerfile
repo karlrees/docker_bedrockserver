@@ -1,16 +1,4 @@
 FROM ubuntu
-ENV container docker
-
-# set minecraft world name and port and apk filename
-ENV WORLD='world'
-ENV MCPORT=19132
-ARG INSTALLERURL=https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.0.34.zip
-ENV MCSERVERFOLDER=/srv/bedrockserver
-ENV MCVOLUME=/config
-ENV MCUSER=1001
-ENV MCGROUP=0
-
-EXPOSE $MCPORT
 
 # install dependencies
 RUN apt update && \
@@ -18,6 +6,22 @@ RUN apt update && \
   apt clean && \
   apt clean autoclean && \
   rm -rf /var/lib/apt/lists/*
+
+# build arguments
+ARG MCPORT=19132
+ARG INSTALLERURL=https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.1.5.zip
+ARG MCUSER=1132
+ARG MCGROUP=1132
+ENV MCUSER=${MCUSER} MCGROUP=${MCGROUP} MCPORT=${MCPORT}
+
+# setup environment
+ENV container=docker
+ENV WORLD='world'
+ENV MCSERVERFOLDER=/srv/bedrockserver
+ENV MCVOLUME=/config
+
+# open the server port
+EXPOSE $MCPORT
 
 # install minecraft
 RUN curl $INSTALLERURL --output mc.zip && \
