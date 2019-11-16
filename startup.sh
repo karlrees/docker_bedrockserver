@@ -127,7 +127,6 @@ done
 echo "STARTING BEDROCKSERVER: ${WORLD} on ${HOSTNAME}:${MCPORT} ..."
 
 mkfifo /tmp/mc-input
-cat > /tmp/mc-input &
 MC_INPUT_PID=$!
 
 ########### SIG handler ############
@@ -155,5 +154,8 @@ trap _int SIGKILL
 cd /${MCSERVERFOLDER}/
 LD_LIBRARY_PATH=. tail -f /tmp/mc-input | bedrock_server &
 childPID=$!
+while read line
+do
+  echo "$line" > /tmp/mc-input
+done < /dev/stdin &
 wait $childPID
-echo $?
