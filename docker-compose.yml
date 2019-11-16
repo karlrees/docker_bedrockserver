@@ -10,8 +10,8 @@ x-mcserver-common:
     MCGROUP: ${MCGROUP:-1132}
   image: ${DOCKERIMAGENAME:-karlrees/docker_bedrockserver}
   volumes:
-  - ${MCVOLUME:-./config}:/config
-  restart: always
+  - ${MCVOLUME:-./mcdata}:/mcdata
+  restart: unless-stopped
   stdin_open: true
   tty: true
 

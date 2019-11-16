@@ -10,6 +10,9 @@ file_lookup () {
   elif [ -e "${MCVOLUME}/${WORLD}.${LOOKUP_FILE}" ]
   then
     echo "${MCVOLUME}/${WORLD}.${LOOKUP_FILE}"
+  elif [ -e "${MCVOLUME}/worlds/${WORLD}.${LOOKUP_FILE}" ]
+  then
+    echo "${MCVOLUME}/worlds/${WORLD}.${LOOKUP_FILE}"
   else
     echo "${MCVOLUME}/${LOOKUP_FILE}"
   fi
@@ -25,12 +28,14 @@ SERVER_FILE=`file_lookup "server.properties"`
 # If worldname.server.properties file is found, link to that
 if [ -f ${SERVER_FILE} ]
 then
+  # (re)link server.properties file
+  rm -f -- ${MCSERVERFOLDER}/server.properties
   ln -s ${SERVER_FILE} ${MCSERVERFOLDER}/server.properties
 else
   echo "Generating server configuration:"
   # create base for server.properties
-  echo -e "server-port=19132\nlevel-name=world" > ${MCSERVERFOLDER}/server.properties
-  echo -e "\tserver-port=19132\n\tlevel-name=world"
+  echo -e "server-port=${MCPORT}\nlevel-name=${WORLD}" > ${MCSERVERFOLDER}/server.properties
+  echo -e "\tserver-port=${MCPORT}\n\tlevel-name=${WORLD}"
   # Parse all environment variables beginning with MCPROP to generate server.properties
   # For each matching line
   #  - Get property name from beggining to first = sign
@@ -62,6 +67,8 @@ do
 	then
 		cp ${MCSERVERFOLDER}/default/${f} ${LOOKUP_FILE}
 	fi
+	# (re)link directory
+	rm -f -- ${MCSERVERFOLDER}/${f}	
 	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
 done
 
@@ -74,6 +81,8 @@ do
 	then
 		touch ${LOOKUP_FILE}
 	fi
+	# (re)link directory
+	rm -f -- ${MCSERVERFOLDER}/${f}	
 	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
 done
 
@@ -84,22 +93,26 @@ do
   # if directory doesn't exist create from minecraft default
 	if ! [ -d "${LOOKUP_FILE}" ]
 	then
-		cp -a ${MCSERVERFOLDER}/default/${d} ${LOOKUP_FILE}
+		cp -a ${MCSERVERFOLDER}/default/${f} ${LOOKUP_FILE}
 	fi
-	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${d}
+	# (re)link directory
+	rm -f -- ${MCSERVERFOLDER}/${f}	
+	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
 done
 
 # Link directories without defaults
 for f in development_behavior_packs development_resource_packs premium_cache treatments world_templates
 do
   LOOKUP_FILE=`file_lookup "${f}"`
-  # if diretory doesn't exist create empty
+  # if directory doesn't exist create empty
 	if ! [ -d "${LOOKUP_FILE}" ]
 	then
 		mkdir ${LOOKUP_FILE}
 		chmod g=u ${LOOKUP_FILE}
 	fi
-	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${d}
+	# (re)link directory
+	rm -f -- ${MCSERVERFOLDER}/${f}	
+	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
 done
 
 echo "STARTING BEDROCKSERVER: ${WORLD} on ${HOSTNAME}:${MCPORT} ..."

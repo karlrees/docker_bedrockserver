@@ -18,7 +18,7 @@ ENV MCUSER=${MCUSER} MCGROUP=${MCGROUP} MCPORT=${MCPORT}
 ENV container=docker
 ENV WORLD='world'
 ENV MCSERVERFOLDER=/srv/bedrockserver
-ENV MCVOLUME=/config
+ENV MCVOLUME=/mcdata
 
 # open the server port
 EXPOSE $MCPORT
