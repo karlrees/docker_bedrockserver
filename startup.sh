@@ -1,5 +1,14 @@
 #!/bin/bash
 
+###########################################
+#
+# Startup script for bedrock_server
+# 
+# This script is intended to be copied to and run 
+# from within the docker container only
+#
+###########################################
+
 export PATH=$PATH:${MCSERVERFOLDER}
 
 file_lookup () {

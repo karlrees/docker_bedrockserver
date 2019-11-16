@@ -76,7 +76,7 @@ sudo chown -R 1132:1132 /path/to/mcdata
 
 Other options would include adding the user 1132 to a group that has access to the mcdata folder, or changing the user id and/or group id under which the server runs to something that already has access to the mcdata folder.  Changing the user id and/or group id under which the server runs is explained later in the document.
 
-4. Start the document container
+4. Start the docker container
 
 ```
 docker run -dit --name="minecraft" --network="host" -v /path/to/mcdata:/mcdata karlrees/docker_bedrockserver
@@ -114,11 +114,13 @@ cd docker_bedrockserver
 ```
 
 2. Setup a mcdata folder.  See steps 2-3 of the "New world with externally mounted data" instructions.
-3. Copy the "example.env" to ".env".
+3. Run setup.sh
 
 ```
-cp example.env .env
+./setup.sh
 ```
+This copies the example .env file and docker-compose.yml file to their expected locations.
+
 
 4. Edit the .env file as needed.  You will probably need to at least:
 
@@ -153,23 +155,23 @@ Note that level-name is a special property that is set by the WORLD environment 
 
 You will need to restart the container for the changes to take effect.  
 
-*Server properties may instead be changed using a custom worldname.server.properties file in the "mcdata" folder, per the technique below.*
+*Server properties may instead be changed using a custom worldname.server.properties file in the "mcdata" folder, or a server.properties file in the world folder, per the technique below.*
 
 ## Custom permissions / whitelist / resource files and folders
 
-You can change your permissions.json file, whitelist.json file, resource directories, and so forth, by mounting the /mcdata folder to an external volume and making changes from there.  These are all linked to the appropriate locations on the server when the conatiner is started.  
+You can change your permissions.json file, whitelist.json file, resource directories, and so forth, by mounting the /mcdata folder to an external volume and making changes from there.  These are all linked to the appropriate locations on the server when the container is started.  
 
 ### Multiple Servers
 
-If you are running multiple servers, by default they will all share the same files in the /mcdata folder.  You may or may not want to change this.  You can create separate permissions, whitelists, etc., for a server by prefacing the appropriate file(s) and/or directories in the mcdata folder with "worldname.", where "worldname" is the name of your world.  
+If you are running multiple servers, by default they will all share the same files in the /mcdata folder.  You may or may not want to change this.  You can create separate permissions, whitelists, etc., for a server by either saving the appropriate file or folder in your custom world folder, or prefacing the appropriate file(s) and/or directories in the mcdata folder with "worldname.", where "worldname" is the name of your world.  
 
-For instance, to create a separate permissions file for your world, create a file named "/mcdata/worldname.permissions.json" (where "worldname" is the name of your world).  The startup script will link this file, if it exists, into the worldname image as the permissions.json file for the server.  
+For instance, to create a separate permissions file for your world, you could create a file named "/mcdata/worldname.permissions.json" (where "worldname" is the name of your world).  Or, you could save permissions.json to "/mcdata/worlds/worldname/permissions.json."  In either case, the startup script will link this file, if it exists, into the worldname image as the permissions.json file for the server.  
 
 Similarly, the startup script would copy the "worldname.whitelist.json" file, if it exists (where "worldname" is the name of your world), into the image as the whitelist.json file for the server.
 
-Or, for a custom resource_packs directory, rename it "worldname.resource_packs."
+Or, for a custom resource_packs directory, rename it "worldname.resource_packs" or save it to "/mcdata/worlds/worldname/resource_packs."
 
-You will need to restart the container for the changes to take effect.  
+You will need to restart the container for the changes to take effect.
 
 ## Accessing the server console
 
