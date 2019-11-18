@@ -9,7 +9,7 @@
 #
 ###########################################
 
-export PATH=$PATH:${MCSERVERFOLDER}
+echo "LINKING MINECRAFT DATA ..."
 
 file_lookup () {
   LOOKUP_FILE=$1

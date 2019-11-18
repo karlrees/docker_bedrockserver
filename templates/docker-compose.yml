@@ -1,3 +1,9 @@
+#################################################################
+# Docker Compose file for MineCraft Bedrock Server
+#
+# For each server, copy and paste one of the example servers.
+#################################################################
+
 version: '3.4'
 
 x-mcserver-common:
@@ -24,8 +30,13 @@ networks:
    config:
    - subnet: ${IPPREFIX:-192.168.0}.0/24
 
+
+
+#################################################################
+# Define your MineCraft servers here
+#
 # For each server, copy and paste one of the example servers.
-# Be sure to change the name and last three digits of IP address
+#################################################################
 
 services:
  

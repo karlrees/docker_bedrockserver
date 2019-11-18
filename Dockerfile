@@ -8,17 +8,21 @@ RUN apt update && \
   rm -rf /var/lib/apt/lists/*
 
 # build arguments
-ARG MCPORT=19132
-ARG INSTALLERURL=https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.1.5.zip
-ARG MCUSER=1132
-ARG MCGROUP=1132
-ENV MCUSER=${MCUSER} MCGROUP=${MCGROUP} MCPORT=${MCPORT}
+ARG MCPORT
+ARG INSTALLERURL
+ARG MCUSER
+ARG MCGROUP
+ENV MCUSER=${MCUSER:-1132}
+ENV MCGROUP=${MCGROUP:-1132}
+ENV MCPORT=${MCPORT:-19132}
+ENV INSTALLERURL=${INSTALLERURL:-"https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.1.5.zip"}
 
 # setup environment
 ENV container=docker
 ENV WORLD='world'
-ENV MCSERVERFOLDER=/srv/bedrockserver
+ENV MCSERVERFOLDER="/srv/bedrockserver"
 ENV MCVOLUME=/mcdata
+ENV PATH $PATH:${MCSERVERFOLDER}
 
 # open the server port
 EXPOSE $MCPORT
@@ -37,12 +41,12 @@ RUN curl $INSTALLERURL --output mc.zip && \
 VOLUME $MCVOLUME
 
 # set up startup script
-COPY startup.sh /srv/bedrockserver/
-RUN chmod +x $MCSERVERFOLDER/startup.sh && \
-  chmod -Rf g=u $MCSERVERFOLDER/startup.sh && \
-  chown $MCUSER:$MCGROUP $MCSERVERFOLDER/startup.sh
+COPY resource/runbedrockserver.sh $MCSERVERFOLDER
+RUN chmod +x $MCSERVERFOLDER/runbedrockserver.sh && \
+  chmod -Rf g=u $MCSERVERFOLDER/runbedrockserver.sh && \
+  chown $MCUSER:$MCGROUP $MCSERVERFOLDER/runbedrockserver.sh
 
 # set default user to minecraft user
 USER $MCUSER:$MCGROUP
 
-CMD ["/srv/bedrockserver/startup.sh"]
+CMD ["runbedrockserver.sh"]

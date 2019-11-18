@@ -17,19 +17,19 @@ echo -e "\nThis script copies the example files to the appropriate locations to 
 
 if ! [ -f .env ] 
 then
-	cp example.env .env
+	cp templates/.env .env
 else
 	echo -e "- Error: The .env file already exists.  To avoid inadvertently losing your changes, this script will not overwrite it.  Please edit it manually, or delete the file.\n"
 fi
 if ! [ -f docker-compose.yml ] 
 then
-	cp example.docker-compose.yml docker-compose.yml
+	cp templates/docker-compose.yml docker-compose.yml
 else
 	echo -e "- Error: The docker-compose.yml file already exists.  To avoid inadvertently losing your changes, this script will not overwrite it.  Please edit it manually, or delete the file.\n"
 fi
 if ! [ -d mcdata ] 
 then
-	cp -R example.mcdata mcdata
+	cp -R templates/mcdata mcdata
 	chmod -R 777 mcdata
 else
 	echo -e "- Error: The mcdata folder already exists.  To avoid inadvertently losing your data, this script will not overwrite it.  Please delete it if you want to overwrite it.\n"

@@ -122,13 +122,13 @@ cd docker_bedrockserver
 This copies the example .env file and docker-compose.yml file to their expected locations.
 
 
-4. Edit the .env file as needed.  You will probably need to at least:
+4. Edit the .env file (created from the setup.sh script) as needed.  You will probably need to at least:
 
  - change the IP Prefix to match your subnet
  - change eth0 to match your network interface
  - change the MCVOLUME to point to the absolute path of your mcdata folder from step 2
 
-5. Edit the docker-compose file to include a separate section for each server.  Be sure to change the name for each server--change both the container_name property and the WORLD environment variable.  Be sure to use a different IP address for each server as well.
+5. Edit the docker-compose.yml file (created from the setup.sh script) to include a separate section for each server.  Be sure to change the name for each server--change both the container_name property and the WORLD environment variable.  Be sure to use a different IP address for each server as well.
 6. Run docker-compose
 
 ```
@@ -207,7 +207,7 @@ Note that if you use docker-compose, the docker-compose file is set to automatic
 
 For new updates to the server, first remove the existing containers.  Then grab the update, and run the container again.
 
-###If you used the single-server instructions###
+###If you are pulling the docker image directly (basic single-server installs)###
 
 Use the following commands, where "minecraft" is the container name:
 
@@ -217,11 +217,11 @@ docker rm minecraft
 docker pull karlrees/docker_bedrockserver
 ```
 
-Then use whatever docker run command you used to run ther container.
+Then use whatever docker run command you used to run the container.
 
-###If you used the multiple world instructions###
+###If you are building the docker image yourself (e.g. multiple world, pulling the source from GitHub)###
 
-For the docker-compose route, first be sure to save copies of any files you changed, in case you need to repeate those changes after the update.  Then, do the following, where ~/docker_bedrockserver is the location where you downloaded the source files:
+Use the following commands, where ~/docker_bedrockserver is the location where you downloaded the source files:
 
 ```
 cd ~/docker_bedrockserver
@@ -271,9 +271,13 @@ We were previously running the server within the container as root.  We have cha
 
 If you were using the docker-compose.yml file before, we have changed the docker-compose.yml file somewhat.  You should probably save your previous version as a reference, download the new version, and readjust the new version to match the changes you made to your previous version.
 
+Note that docker-compose.yml no longer exists in the repository.  The expectation is that users will copy the example.docker-compose.yml to docker-compose.yml, either manually or via the setup.sh script.
+
 ### Changed .env file usage
 
-Before, certain environment varaibles were always being set from the .env file, which made the defaults in docker-compose kind of pointless.  I have commented out all values in the .env file.  Going forward, I suggest you use the .env file only if you want to override the default docker-compose value.  You would then set up git to ignore the .env file (and docker-compose.yml), so that you could update the project in the future without losing your settings.
+Before, certain environment varaibles were always being set from the .env file, which made the defaults in docker-compose kind of pointless.  I have commented out all values in the .env file.  Going forward, I suggest you use the .env file only if you want to override the default docker-compose value.  
+
+Also, git is now setup to ignore the .env file (and docker-compose.yml), so that you can update the project in the future without losing your settings.
 
 ## Known Issues
 
