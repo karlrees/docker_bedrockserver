@@ -182,7 +182,7 @@ cp templates/docker-compose.yml docker-compose.yml
  - change `eth0` to match your network interface
  - change the `MCVOLUME` to point to the absolute path of your `mcdata` folder from step 2
 
-5. Edit the `docker-compose.yml` file to include a separate section for each server.  Be sure to change the name for each server--change both the container_name property and the `WORLD` environment variable.  Be sure to use a different IP address for each server as well.
+5. Edit the `docker-compose.yml` file to include a separate section for each server.  Be sure to change the name for each server--change both the `container_name` property and the `WORLD` environment variable.  Be sure to use a different IP address for each server as well.
 
 6. Run `docker-compose`
 
@@ -212,18 +212,18 @@ docker-compose up -d
 
 Server properties may be changed using either a custom `server.properties` file for your world, or `MCPROP_` environment variables.  Any time you change properties, you will need to restart the container for the changes to take effect.
 
-### Server.properties
+### server.properties
 
-The container will look for a custom `server-properties` file for its world/server in each of the following locations: `/mcdata/world.server.properties`, `/mcdata/worlds/world.server.properties`, and `/mcdata/worlds/world/server.properties` (where `world` is the name of the world/server).  It will then link the `server.properties` file for the server to the custome `server.properties` it locates.
+The container will look for a custom `server-properties` file for its world/server in each of the following locations: `/mcdata/world.server.properties`, `/mcdata/worlds/world.server.properties`, and `/mcdata/worlds/world/server.properties` (where `world` is the name of the world/server).  It will then link the `server.properties` file for the server to the custom `server.properties` it locates.
 
 If no custom `server.properties` file is found, a default `server.properties` file will be created, optionally using any supplied environment variables (see below).
 
 ### MCPROP_ Environment variables
 
-Environment varaibles may be passed through the command line or set in the `docker-compose.yml` file.  For instance, to change the gamemode to 1 over the CLI, one would set the `MCPROP_GAMEMODE` environment variable to `1`.
+Environment variables may be passed through the command line or set in the `docker-compose.yml` file.  For instance, to change the gamemode to 1 over the CLI, one would set the `MCPROP_GAMEMODE` environment variable to `1`.
 
 ```
-docker run -e MCPROP_GAMEMODE=1 -e WORLD=worldname -v /path/to/worlds/folder:/mcdata -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
+docker run -e MCPROP_GAMEMODE=1 -e WORLD=world -v /path/to/worlds/folder:/mcdata -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
 ```
 
 The `docker-compose.yml` gives some examples of passing `MCPROP_` environment variables through it.
