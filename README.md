@@ -199,8 +199,11 @@ docker-compose up -d
 3. For each world, copy the contents of the `world` folder to the `/mcdata/worlds/` folder, using a different name for each. 
 
 So you might have, for instance, a `/mcdata/worlds/world1` folder, a `/mcdata/worlds/world2` folder, and so forth.
+
 4. Reset permissions on the `mcdata` folder, if needed.  *See* Step 3 of [Option B](#option-b-single-world-manual-setup).
+
 5. Edit `docker-compose.yml` to include a separate section for each server/world. Be sure to change the name for each server/world to match what you used in step 3.
+
 6. Restart the docker-compose services.
 
 ```
