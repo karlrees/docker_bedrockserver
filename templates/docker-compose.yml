@@ -1,7 +1,8 @@
 #################################################################
 # Docker Compose file for MineCraft Bedrock Server
 #
-# For each server, copy and paste one of the example servers.
+# The top section is common to all servers
+# Continue to the services section to define your own servers
 #################################################################
 
 version: '3.4'
@@ -11,9 +12,10 @@ x-mcserver-common:
   build: 
    context: .
    args:
-    INSTALLERURL: ${INSTALLERURL:-https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.1.5.zip}
-    MCUSER: ${MCUSER:-1132}
-    MCGROUP: ${MCGROUP:-1132}
+    INSTALLERURL: ${INSTALLERURL:-}
+    MCUSER: ${MCUSER:-}
+    MCGROUP: ${MCGROUP:-}
+    MCPORT: ${MCPORT:-}
   image: ${DOCKERIMAGENAME:-karlrees/docker_bedrockserver}
   volumes:
   - ${MCVOLUME:-./mcdata}:/mcdata
@@ -40,10 +42,14 @@ networks:
 
 services:
  
- #First Server
+#----------------------------------------
+# First Server
+#----------------------------------------
+
  minecraft1:
   << : *default-mcserver
   environment:
+   # Be sure to use a unique name for the world
    WORLD: minecraft1
    # Example server properties that are available for configuration.
    # These should all be prepended with "MCPROP_".
@@ -55,12 +61,18 @@ services:
   container_name: minecraft1
   networks: 
    default:
+    # Be sure the last three digits of IP address is unique
     ipv4_address: ${IPPREFIX:-192.168.0}.201
  
- #Second Server
+
+#----------------------------------------
+# Second Server
+#----------------------------------------
+
  minecraft2:
   << : *default-mcserver
   environment:
+   # Be sure to use a unique name for the world
    WORLD: minecraft2
    # Example server properties that are available for configuration.
    # These should all be prepended with "MCPROP_".
@@ -72,6 +84,7 @@ services:
   container_name: minecraft2
   networks: 
    default:
+    # Be sure the last three digits of IP address is unique
     ipv4_address: ${IPPREFIX:-192.168.0}.202
 
 
