@@ -80,7 +80,7 @@ The container/server should now be running, and your world data can be found in 
 
 If you don't have git installed, or you want more control over the container configuration:
 
-1. Pull the docker image, as in step 1 of the quick start instructions.
+1. Pull the docker image, as in step 1 of the [Quick Start](#quick-start-for-a-single-server) instructions.
 2. Create (or locate) a parent folder to store (or that already stores) your Minecraft data.  We'll refer this folder subsequently as the `mcdata` folder.  You may use the supplied `mcdata` folder from the repository, or any other suitable location.  For instance:
 
 ```
