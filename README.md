@@ -15,7 +15,7 @@ This worked well for a single server, but my kids each have their own worlds the
 - 0.1.8.2 (16 Dec 2018): Bump minecraft version number
 - Initial release (17 Oct 2018)
 
-*For updating to version 1.13.1, see the end of the document.*
+*For updating to version 1.13.1, see [Updating to Version 1.13.1](#updating-to-version-1131).*
 
 ## Prerequisites
 
@@ -111,13 +111,13 @@ docker run -dit --name="minecraft" --network="host" -v /path/to/mcdata:/mcdata k
 
 *To build/run a single server using a pre-existing Bedrock world folder:*
 
-1. Follow Option A or Option B from above.
+1. Follow [Option A](#option-a-single-world-setup-script) or [Option B](#option-b-single-world-manual-setup) from above.
 2. Locate the `world` folder that stores the existing Minecraft world data for the world you wish to serve.  This may or may not be named `world`, but we'll refer to it subsequently as the `world` folder. 
 
 *You'll know this folder from the fact that it includes a file named "level.dat" and a subfolder named "db".  For instance, if you wanted to import a world from the Windows 10 Minecraft app, this would be a folder such as `C:\Users\username\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\minecraftWorlds\xxx`, where `username` is the name of your user account and xxx is typically a random set of characters.*
 
 3. Replace the contents of the `/mcdata/worlds/world` folder with the contents of the `world` folder you located.
-4. Reset permissions on the `mcdata` folder, if needed.  See step 3 of Option B.
+4. Reset permissions on the `mcdata` folder, if needed.  *See* Step 3 of [Option B](#option-b-single-world-manual-setup).
 5. Restart the server
 
 ```
@@ -166,7 +166,7 @@ If this doesn't work for you, you can try the manual setup below.
 git clone https://github.com/karlrees/docker_bedrockserver
 ```
 
-2. Setup a `mcdata` folder.  See steps 2-3 of the "Option B" instructions.
+2. Setup a `mcdata` folder.  *See* Steps 2-3 of [Option B](#option-b-single-world-manual-setup).
 
 3. Copy the example `.env` file and `docker-compose.yml` from the `templates` folder to parent directory.
 
@@ -194,12 +194,12 @@ docker-compose up -d
 
 *To run multiple servers using multiple pre-existing Bedrock worlds, each running at a separate IP address:*
 
-1. Follow Option C or Option D from above.
+1. Follow [Option C](#option-c-multi-world-setup-script) or [Option D](#option-d-multi-world-manual-setup) from above.
 2. Locate the `world` folder that stores the existing Minecraft world data for each world you wish to serve.  This may or may not be named `world`, but we'll refer to it subsequently as the `world` folder. 
 3. For each world, copy the contents of the `world` folder to the `/mcdata/worlds/` folder, using a different name for each. 
 
 So you might have, for instance, a `/mcdata/worlds/world1` folder, a `/mcdata/worlds/world2` folder, and so forth.
-4. Reset permissions on the `mcdata` folder, if needed.  See step 3 of Option B.
+4. Reset permissions on the `mcdata` folder, if needed.  *See* Step 3 of [Option B](#option-b-single-world-manual-setup).
 5. Edit `docker-compose.yml` to include a separate section for each server/world. Be sure to change the name for each server/world to match what you used in step 3.
 6. Restart the docker-compose services.
 
@@ -280,7 +280,7 @@ Note that if you use docker-compose, the `docker-compose.yml` file is set to aut
 
 For new updates to the server, first remove the existing containers.  Then grab the update, and run the container again.
 
-###If you are pulling the docker image directly (basic single-server installs)###
+### If you are pulling the docker image directly (basic single-server installs)
 
 Use the following commands, where `minecraft` is the container name:
 
@@ -292,7 +292,7 @@ docker pull karlrees/docker_bedrockserver
 
 Then use whatever docker run command you used to run the container.
 
-###If you are building the docker image yourself (e.g. multiple world, pulling the source from GitHub)###
+### If you are building the docker image yourself (e.g. multiple world, pulling the source from GitHub)
 
 Use the following commands, where `~/docker_bedrockserver` is the location where you downloaded the source files:
 
@@ -306,7 +306,7 @@ docker-compose up -d
 
 ## Changing the user the server runs under
 
-By default, the server runs within the container under user 1132 and group 1132.  You can change these by setting the `MCUSER` and `MCGROUP` environment build arguments.  (Depending on what you choose, you may need to reset the permissions on your `mcdata` folder to match -- see step 3 of "Option B").
+By default, the server runs within the container under user 1132 and group 1132.  You can change these by setting the `MCUSER` and `MCGROUP` environment build arguments.  (Depending on what you choose, you may need to reset the permissions on your `mcdata` folder to match -- *see* Step 3 of [Option B](#option-b-single-world-manual-setup)).
 
 If you are using the docker-compose approach, all you need to do is change these values in the `.env` file. 
 
@@ -334,7 +334,7 @@ To update to 1.13.1, you may need to be aware of the following, depending on how
 
 ### Changed mount point
 
-Prior to version 1.13.1, the recommended installation procedure was to mount directly to the `srv/bedrockserver/worlds folder`.  We now recommend mounting to the `/mcdata` folder, which should be up one level from your `worlds` folder.  See the instructions above and the new docker file.
+Prior to version 1.13.1, the recommended installation procedure was to mount directly to the `srv/bedrockserver/worlds folder`.  We now recommend mounting to the `/mcdata` folder, which should be up one level from your `worlds` folder.  See the instructions above and the new DockerFile.
 
 ### Changed user id
 
