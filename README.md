@@ -27,7 +27,7 @@ The Minecraft data may further be exposed to your host, so that you can easily b
 
 ## Instructions
 
-### Quick Start for a single server
+### Quick Start (Single Server)
 
 *To build/run a single server with a new world on the host:*
 
@@ -80,7 +80,7 @@ The container/server should now be running, and your world data can be found in 
 
 If you don't have git installed, or you want more control over the container configuration:
 
-1. Pull the docker image, as in step 1 of the [Quick Start](#quick-start-for-a-single-server) instructions.
+1. Pull the docker image, as in step 1 of the [Quick Start](#quick-start-single-server) instructions.
 2. Create (or locate) a parent folder to store (or that already stores) your Minecraft data.  We'll refer this folder subsequently as the `mcdata` folder.  You may use the supplied `mcdata` folder from the repository, or any other suitable location.  For instance:
 
 ```
@@ -271,9 +271,9 @@ You can then issue server commands, like `stop`, `permissions list`, etc.
 
 To exit, enter `Ctrl-P` followed by `Ctrl-Q`.
 
-## Restarting the server
+## Restarting a server
 
-You can stop the server in the console, or by issuing the following command (where `minecraft` is the container name):
+You can stop a server in the console, or by issuing the following command (where `minecraft` is the container name):
 
 ```
 docker stop minecraft
@@ -285,11 +285,16 @@ You can restart it with the following command.
 docker start minecraft
 ```
 
-Note that if you use docker-compose, the `docker-compose.yml` file is set to automatically restart a server once it goes down, so this command should not be necessary unless you change the `docker-compose.yml` file.
+If using docker-compose, you can restart all servers at once using:
+
+```
+docker-compose down
+docker-compose up
+```
 
 ## Minecraft Server updates
 
-For new updates to the server, first remove the existing containers.  Then grab the update, and run the container again.
+For new updates to the server, first remove the existing containers.  Then grab the update, and run the container again.  To do this:
 
 ### If you are pulling the docker image directly (basic single-server installs)
 
