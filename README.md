@@ -1,18 +1,20 @@
 # Minecraft Server (Bedrock) for Docker
 
-A Docker image and docker-compose file to run one or more instances of a native Minecraft Bedrock server in a minimal ubuntu environment.
+A Docker image and docker-compose file to run one or more instances of a native Minecraft Bedrock server in a minimal Ubuntu environment.  
 
-## Background
+## Introduction
 
-My kids wanted a Minecraft (Bedrock) server so that they can play the same worlds on any of their devices at home.  Fortunately, Minecraft finally released an alpha version of a server for Bedrock edition.  See https://minecraft.net/en-us/download/server/bedrock/.
+This repository includes a DockerFile to build a Ubuntu-based Docker image configured to launch a Minecraft Bedrock Dedicated Server.  In most cases, when run using the host network driver, as shown in the instructions, any Minecraft Bedrock client (e.g. XBox One, Windows 10, Android, etc.) on your local area network *should* be able to see the server under the list of "Friends."
 
-This worked well for a single server, but my kids each have their own worlds they want to serve, and they want to be able to bring these up and down quickly.  Long story short, for various reasons, I decided it was time to teach myself about Docker, and run the servers as separate docker containers.
+This repository further includes an example docker-compose.yml file for Docker Compose to run multiple such containers on a macvlan network.  When setup properly through the script and/or manual instructions below, it will concurrently run multiple servers that are each accessible to the local area network.  For instance, I have used it to run different survival and creative worlds for each of my children at the same time, each of which is always accessible on our home network, no matter what device the kids are using.   
+
+The Minecraft data may further be exposed to your host, so that you can easily back up your worlds and configuration.
 
 ## Version History
 
 - 1.13.1 (Nov 2019): Major revisions to architecture, including running under a different user and expanded custom resource file/directory support
 - 0.1.12 (10 Jul 2019): Custom permission file support
-- 0.1.8.2 (16 Dec 2018): Bump minecraft version number
+- 0.1.8.2 (16 Dec 2018): Bump Minecraft version number
 - Initial release (17 Oct 2018)
 
 *For updating to version 1.13.1, see [Updating to Version 1.13.1](#updating-to-version-1131).*
@@ -20,7 +22,7 @@ This worked well for a single server, but my kids each have their own worlds the
 ## Prerequisites
 
 - Docker
-- docker-compose (if you want to use the instructions for multiple servers)
+- Docker Compose (if you want to use the instructions for multiple servers)
 - git (if you need to build your own image or use docker-compose)
 
 ## Instructions
@@ -41,19 +43,19 @@ docker pull karlrees/docker_bedrockserver
 docker run -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
 ```
 
-Unfortunately, I think it's probable that with the above command, *you will lose your world* if you ever have to update the docker image (e.g. for a new server version).  One way to get around this, *may* be to give a fixed name the mcdata folder as follows:
+It's probable that, relying on the above command, *you will lose your world* if you ever have to update the docker image (e.g. for a new server version).  One way to get around this, is to make the mcdata folder a Docker volume as follows:
 
 ```
 docker run -dit --name="minecraft" --network="host" -v mcdata:/mcdata karlrees/docker_bedrockserver
 ```
 
-It seems to work in a few test cases that I've tried, but I'm not confident enough with that solution, however, to rely on it myself.  Instead, I would mount a mcdata folder from the host system using the instructions in the next section.
+However, it's nonetheless possible that Docker (or more likely you) could eventually inadvertantly remove the volume somehow.  A more fool-proof solution is to actually mount the volume to the host, as shown in the next section.
 
 ### Single-server with externally mounted data
 
 *To build/run a single server with a world whose data is stored in an externally accessible folder:*
 
-Aside from giving you better peace of mind that your worlds will persist after an update, this has the added benefit of giving you easy access to the mcdata folder so that you can create backups.
+Aside from giving you better peace of mind that you won't lose your data, this has the added benefit of giving you easy access to the mcdata folder so that you can create backups and/or manipulate your data.
 
 #### Option A (Single-world Setup Script)
 
@@ -67,18 +69,9 @@ git clone https://github.com/karlrees/docker_bedrockserver
 
 2. Run the setup script.
 
-On Linux:
-
 ```
 cd docker_bedrockserver
 ./setup_standalone.sh
-```
-
-On Windows:
-
-```
-cd docker_bedrockserver
-setup_standalone.bat
 ```
 
 The container/server should now be running, and your world data can be found in the `docker_bedrockserver/mcdata` folder.
@@ -94,7 +87,7 @@ If you don't have git installed, or you want more control over the container con
 mkdir /path/to/mcdata
 ```
 
-3. Give this new folder permissions whereby it is accessible to the user under which the server will run in the docker container.  *I believe you can safely skip this step on Windows, though I haven't tested thoroughly.*
+3. Give this new folder permissions whereby it is accessible to the user under which the server will run in the docker container.
 
 In Linux, there are a number of ways to do this.  The easiest and most nuclear option would be:
 
@@ -142,7 +135,7 @@ docker start minecraft
 
 ### Multiple worlds with docker-compose
 
-*To run multiple servers using multiple Bedrock worlds, each running at a separate IP address:*
+*To run multiple servers using multiple Bedrock worlds, each running at a separate IP address on your LAN:*
 
 #### Option C (Multi-world Setup Script)
 
@@ -197,7 +190,7 @@ cp templates/docker-compose.yml docker-compose.yml
  - change `eth0` to match your network interface
  - change the `MCVOLUME` to point to the absolute path of your `mcdata` folder from step 2
 
-5. Edit the `docker-compose.yml` file to include a separate section for each server.  Be sure to change the name for each server--change both the `container_name` property and the `WORLD` environment variable.  Be sure to use a different IP address for each server as well.
+5. Edit the `docker-compose.yml` file to include a separate section for each server, copying or editing the example servers already at the bottom of the file.  Be sure to change the name for each server--change both the `container_name` property and the `WORLD` environment variable.  Be sure to use a different IP address for each server as well.
 
 6. Run `docker-compose`
 
@@ -217,7 +210,7 @@ So you might have, for instance, a `/mcdata/worlds/world1` folder, a `/mcdata/wo
 
 4. Reset permissions on the `mcdata` folder, if needed.  *See* Step 3 of [Option B](#option-b-single-world-manual-setup).
 
-5. Edit `docker-compose.yml` to include a separate section for each server/world. Be sure to change the name for each server/world to match what you used in step 3.
+5. Edit `docker-compose.yml` to include a separate section for each server/world, copying or editing the example servers already at the bottom of the file. Be sure to change the name for each server/world to match what you used in step 3.
 
 6. Restart the docker-compose services.
 
@@ -354,6 +347,12 @@ docker build --build-arg MCUSER=1000 --build-arg MCGROUP=1000 -t karlrees/docker
 ```
 
 *Be sure to use a numeric id, not a display name like root or user.*
+
+## Using a Windows host
+
+The above instructions assume you are running on a Linux-based host.  You can also run the containers on a Windows-based host.  However, because of differences in how Windows-based hosts handle networking, you won't by default have access to the servers on your LAN.
+
+You *may* be able to get access to the servers on your LAN, if you bridge the Windows docker network with your LAN and/or set up port forwarding.  These are not tasks for the faint-hearted, and I make no attempt to describe them here.
 
 ## Troubleshooting
 
