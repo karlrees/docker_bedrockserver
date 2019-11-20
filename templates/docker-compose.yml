@@ -16,7 +16,6 @@ x-mcserver-common:
     MCUSER: ${MCUSER:-}
     MCGROUP: ${MCGROUP:-}
     MCPORT: ${MCPORT:-}
-  image: ${DOCKERIMAGENAME:-karlrees/docker_bedrockserver}
   volumes:
   - ${MCVOLUME:-./mcdata}:/mcdata
   restart: unless-stopped

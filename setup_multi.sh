@@ -28,7 +28,7 @@ then
 	sed -i -e "s|.*IPPREFIX\=.*|IPPREFIX\=${I}|g" .env
 	sed -i -e "s|.*MCVOLUME\=.*|MCVOLUME\=${R}/mcdata|g" .env
 else
-	echo -e "------------------------------------------------------------------\nWARNING: The .env file already exists.  To avoid inadvertently \nlosing your changes, this script will not overwrite \nit.  Please edit it manually, or delete the file.\n------------------------------------------------------------------\n"
+	echo -e "------------------------------------------------------------------\nWARNING: The .env file already exists.  To avoid inadvertently \nlosing your changes, this script will not overwrite \nit.  Please edit it manually, or delete .env and run this script again.\n------------------------------------------------------------------\n"
 fi
 
 
@@ -37,7 +37,7 @@ if ! [ -f docker-compose.yml ]
 then
 	cp templates/docker-compose.yml docker-compose.yml
 else
-	echo -e "------------------------------------------------------------------\nWARNING: The docker-compose.yml file already exists. To avoid \ninadvertently losing your changes, this script will not overwrite it.\nPlease edit it manually, or delete the file.\n------------------------------------------------------------------\n"
+	echo -e "------------------------------------------------------------------\nWARNING: The docker-compose.yml file already exists. To avoid \ninadvertently losing your changes, this script will not overwrite it.\nPlease edit docker-compose.yml manually, or delete docker-compose.yml and run this script again.\n------------------------------------------------------------------\n"
 fi
 
 

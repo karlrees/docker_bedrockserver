@@ -25,6 +25,14 @@ else
 	echo -e "------------------------------------------------------------------\nWARNING: The example server properties in mcdata is already found.\nTo avoid inadvertently losing your data, this script will not\noverwrite it.  Please delete it if you want to overwrite it.\n------------------------------------------------------------------\n"
 fi
 
+# Stopping and removing container
+echo "Stopping and removing container, if it already exists ..."
+docker stop minecraft >/dev/null 2>&1
+docker rm minecraft >/dev/null 2>&1
+
+# Building image
+echo -e "Building image ..."
+docker build  -t karlrees/docker_bedrockserver .
 
 # Starting container
 echo -e "Starting container ..."

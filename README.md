@@ -55,8 +55,6 @@ It seems to work in a few test cases that I've tried, but I'm not confident enou
 
 Aside from giving you better peace of mind that your worlds will persist after an update, this has the added benefit of giving you easy access to the mcdata folder so that you can create backups.
 
-*Unfortunately, last time I checked (admittedly a while ago), I couldn't get the server to work with an external volume on Windows.  For some reason the server suffers a fatal error.  If someone has an idea of how to make this work, please let me know...*
-
 #### Option A (Single-world Setup Script)
 
 If you have git installed, you can pull the repository and take advantage of the setup script:
@@ -69,9 +67,18 @@ git clone https://github.com/karlrees/docker_bedrockserver
 
 2. Run the setup script.
 
+On Linux:
+
 ```
 cd docker_bedrockserver
-./setup_standalone
+./setup_standalone.sh
+```
+
+On Windows:
+
+```
+cd docker_bedrockserver
+setup_standalone.bat
 ```
 
 The container/server should now be running, and your world data can be found in the `docker_bedrockserver/mcdata` folder.
@@ -87,7 +94,9 @@ If you don't have git installed, or you want more control over the container con
 mkdir /path/to/mcdata
 ```
 
-3. Give this new folder permissions whereby it is accessible to the user under which the server will run in the docker container.  There are a number of ways to do this.  The easiest and most nuclear option would be:
+3. Give this new folder permissions whereby it is accessible to the user under which the server will run in the docker container.  *I believe you can safely skip this step on Windows, though I haven't tested thoroughly.*
+
+In Linux, there are a number of ways to do this.  The easiest and most nuclear option would be:
 
 ```
 sudo chmod -R 777 /path/to/mcdata
@@ -101,7 +110,13 @@ sudo chown -R 1132:1132 /path/to/mcdata
 
 Other options would include adding the user 1132 to a group that has access to the `mcdata` folder, or changing the user id and/or group id under which the server runs to something that already has access to the `mcdata` folder.  Changing the user id and/or group id under which the server runs is explained later in the document.
 
-4. Start the docker container
+4. Build the docker container
+
+```
+docker build  -t karlrees/docker_bedrockserver .
+```
+
+5. Start the docker container
 
 ```
 docker run -dit --name="minecraft" --network="host" -v /path/to/mcdata:/mcdata karlrees/docker_bedrockserver
@@ -226,7 +241,7 @@ If no custom `server.properties` file is found, a default `server.properties` fi
 Environment variables may be passed through the command line or set in the `docker-compose.yml` file.  For instance, to change the gamemode to 1 over the CLI, one would set the `MCPROP_GAMEMODE` environment variable to `1`.
 
 ```
-docker run -e MCPROP_GAMEMODE=1 -e WORLD=world -v /path/to/worlds/folder:/mcdata -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
+docker run -e MCPROP_GAMEMODE=1 -e WORLD=world -v /path/to/mcdata:/mcdata -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
 ```
 
 The `docker-compose.yml` gives some examples of passing `MCPROP_` environment variables through it.
@@ -297,6 +312,23 @@ Then use whatever docker run command you used to run the container.
 
 ### If you are building the docker image yourself (e.g. multiple world, pulling the source from GitHub)
 
+#### Standalone server
+
+If you used the `setup_standalone` script, just re-run it (ignoring any errors about directories that already exist).
+
+Otherise, use the following commands, where `~/docker_bedrockserver` is the location where you downloaded the source files:
+
+```
+cd ~/docker_bedrockserver
+docker stop minecraft
+docker rm minecraft
+git pull
+docker build  -t karlrees/docker_bedrockserver .
+docker run -dit --name="minecraft" --network="host" -v /path/to/mcdata:/mcdata karlrees/docker_bedrockserver
+```
+
+#### Multi-world with docker-compose
+
 Use the following commands, where `~/docker_bedrockserver` is the location where you downloaded the source files:
 
 ```
@@ -318,7 +350,7 @@ Otherwise, you will need to download and build the docker image yourself.  You w
 ```
 git clone https://github.com/karlrees/docker_bedrockserver
 cd docker_bedrockserver
-docker build --build-arg MCUSER=1000 --build-arg MCGROUP=1000 .
+docker build --build-arg MCUSER=1000 --build-arg MCGROUP=1000 -t karlrees/docker_bedrockserver .
 ```
 
 *Be sure to use a numeric id, not a display name like root or user.*
@@ -347,17 +379,13 @@ We were previously running the server within the container as root.  We have cha
 
 If you were using the `docker-compose.yml` file before, we have changed the `docker-compose.yml` file somewhat.  You should probably save your previous version as a reference, download the new version, and readjust the new version to match the changes you made to your previous version.
 
-Note that `docker-compose.yml` no longer exists in the repository.  The expectation is that users will copy the `/examples/docker-compose.yml` to `docker-compose.yml`, either manually or via the `setup_multi.sh` script.
+Note that `docker-compose.yml` no longer exists in the repository.  The expectation is that users will copy the `/templates/docker-compose.yml` to `docker-compose.yml`, either manually or via the `setup_multi.sh` script.
 
 ### Changed .env file usage
 
 Before, certain environment varaibles such as the installer URL were always being set from the `.env` file, which made the defaults in `docker-compose.yml` and the `DockerFile` kind of pointless.  I have commented out these values in the new `.env` file.  Going forward, I suggest you use the `.env` file only if you want to override the default `docker-compose.yml` or `DockerFile` value. 
 
 Also, git is now configured to ignore the `.env` file (and `docker-compose.yml`), so that you can update the project in the future without losing your settings.
-
-## Known Issues
-
-Because of Windows permission difficulties, mounting external volumes for Minecraft worlds does not appear to work when using a Windows host.
 
 ## Contributors
 
