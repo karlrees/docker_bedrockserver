@@ -12,7 +12,7 @@ x-mcserver-common:
   build: 
    context: .
    args:
-    INSTALLERURL: ${INSTALLERURL:-}
+    VERSION: ${VERSION:-}
     MCUSER: ${MCUSER:-}
     MCGROUP: ${MCGROUP:-}
     MCPORT: ${MCPORT:-}
@@ -57,6 +57,7 @@ services:
    #MCPROP_DIFFICULTY: 1           # 0 is peaceful, 1 is easy, 2 is normal, 3 is hard
    #MCPROP_ALLOW-CHEATS: "false"
    #MCPROP_LEVEL-SEED: "myseed1"   # only used if world does not yet exist
+   #VERSION: "latest"              # or a version string like "1.13.3.0"
   container_name: minecraft1
   networks: 
    default:
@@ -80,6 +81,7 @@ services:
    #MCPROP_DIFFICULTY: 1         # 0 is peaceful, 1 is easy, 2 is normal, 3 is hard
    #MCPROP_ALLOW-CHEATS: "false"
    #MCPROP_LEVEL-SEED: "myseed2"  # only used if world does not yet exist
+   #VERSION: "1.13.3.0"              # a version string like "1.13.3.0" or "latest" (default)
   container_name: minecraft2
   networks: 
    default:

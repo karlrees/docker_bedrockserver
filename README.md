@@ -231,7 +231,7 @@ If no custom `server.properties` file is found, a default `server.properties` fi
 
 ### MCPROP_ Environment variables
 
-Environment variables may be passed through the command line or set in the `docker-compose.yml` file.  For instance, to change the gamemode to 1 over the CLI, one would set the `MCPROP_GAMEMODE` environment variable to `1`.
+Environment variables may be passed through the command line or set in the `docker-compose.yml` file. For instance, to change the gamemode to 1 over the CLI, one would set the `MCPROP_GAMEMODE` environment variable to `1`.
 
 ```
 docker run -e MCPROP_GAMEMODE=1 -e WORLD=world -v /path/to/mcdata:/mcdata -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
@@ -240,6 +240,11 @@ docker run -e MCPROP_GAMEMODE=1 -e WORLD=world -v /path/to/mcdata:/mcdata -dit -
 The `docker-compose.yml` gives some examples of passing `MCPROP_` environment variables through it.
 
 Note that `level-name` is a special property that is set by the `WORLD` environment variable, as opposed to `MCPROP_LEVEL-NAME`.
+
+
+## Version Environment variable
+
+A specific version of the bedrock server may be specified through the command line or set in the `docker-compose.yml` file by using the the `VERSION` variable. It defaults to `latest` which extracts the latest available version from the minecraft.net download page, but can also be set to a specific version string such as `1.13.3.0`.
 
 ## Custom permissions / whitelist / resource files and folders
 
