@@ -22,6 +22,9 @@ file_lookup () {
   elif [ -e "${MCVOLUME}/worlds/${WORLD}.${LOOKUP_FILE}" ]
   then
     echo "${MCVOLUME}/worlds/${WORLD}.${LOOKUP_FILE}"
+  elif [ -e "${MCVOLUME}/worlds/${WORLD}.properties" ] && [ ${LOOKUP_FILE} = "server.properties" ]
+  then
+    echo "${MCVOLUME}/worlds/${WORLD}.properties"
   else
     echo "${MCVOLUME}/${LOOKUP_FILE}"
   fi
