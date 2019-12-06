@@ -25,19 +25,10 @@ The Minecraft data may further be exposed to your host, so that you can easily b
 - Docker Compose (if you want to use the instructions for multiple servers)
 - git (if you need to build your own image or use docker-compose)
 
-## Instructions
 
-### Quick Start (Single Server)
+## Quick Start (Single Server)
 
 *To build/run a single server with a new world on the host:*
-
-1. Pull the docker image.
-
-```
-docker pull karlrees/docker_bedrockserver
-```
-
-2. Start the docker container.
 
 ```
 docker run -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
@@ -49,7 +40,10 @@ It's probable that, relying on the above command, *you will lose your world* if 
 docker run -dit --name="minecraft" --network="host" -v mcdata:/mcdata karlrees/docker_bedrockserver
 ```
 
-However, it's nonetheless possible that Docker (or more likely you) could eventually inadvertantly remove the volume somehow.  A more fool-proof solution is to actually mount the volume to the host, as shown in the next section.
+*However, it's nonetheless possible that Docker (or more likely you) could eventually inadvertantly remove the volume somehow.  A more fool-proof solution is to actually mount the volume to the host, as shown in the next section.*
+
+
+## Advanced Instructions
 
 ### Single-server with externally mounted data
 
@@ -78,16 +72,15 @@ The container/server should now be running, and your world data can be found in 
 
 #### Option B (Single-world Manual Setup)
 
-If you don't have git installed, or you want more control over the container configuration:
+If you don't have git installed, and/or you want more control over the container configuration:
 
-1. Pull the docker image, as in step 1 of the [Quick Start](#quick-start-single-server) instructions.
-2. Create (or locate) a parent folder to store (or that already stores) your Minecraft data.  We'll refer this folder subsequently as the `mcdata` folder.  You may use the supplied `mcdata` folder from the repository, or any other suitable location.  For instance:
+1. Create (or locate) a parent folder to store (or that already stores) your Minecraft data.  We'll refer this folder subsequently as the `mcdata` folder.  You may use the supplied `mcdata` folder from the repository, or any other suitable location.  For instance:
 
 ```
 mkdir /path/to/mcdata
 ```
 
-3. Give this new folder permissions whereby it is accessible to the user under which the server will run in the docker container.
+2. Give this new folder permissions whereby it is accessible to the user under which the server will run in the docker container.
 
 In Linux, there are a number of ways to do this.  The easiest and most nuclear option would be:
 
@@ -103,13 +96,7 @@ sudo chown -R 1132:1132 /path/to/mcdata
 
 Other options would include adding the user 1132 to a group that has access to the `mcdata` folder, or changing the user id and/or group id under which the server runs to something that already has access to the `mcdata` folder.  Changing the user id and/or group id under which the server runs is explained later in the document.
 
-4. Build the docker container
-
-```
-docker build  -t karlrees/docker_bedrockserver .
-```
-
-5. Start the docker container
+3. Run the docker container
 
 ```
 docker run -dit --name="minecraft" --network="host" -v /path/to/mcdata:/mcdata karlrees/docker_bedrockserver
@@ -294,7 +281,7 @@ docker-compose up
 
 ## Minecraft Server updates
 
-For new updates to the server, first remove the existing containers.  Then grab the update, and run the container again.  To do this:
+For new updates to the server, first remove the existing containers.  Then pull the update, and run the container again.  To do this:
 
 ### If you are pulling the docker image directly (basic single-server installs)
 
@@ -369,11 +356,20 @@ Second, I've seen this error when there is a permission problem with some or all
 
 ## Updating to version 1.13.1
 
-To update to 1.13.1, you may need to be aware of the following, depending on how you were deploying the server before.
+If you have problems after updating to 1.13.1, it is most likely related to permissions.  A quick and dirty solution may be to go into your worlds volume and run either `chmod -R 777 *`, or `chown -R 1132:1132 *`.  An even more quick and dirty solution would be to run the legacy branch instead.  For instance:
+
+```
+docker pull karlrees/docker_bedrockserver:latest
+docker run -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver:latest
+```
+
+Of course, the most preferred solution (and most likely to be supported going forward) would be to start mounting the mcdata volume instead, as described elsewehere herein.
+
+A few changes in the update that you may or may not need to be aware of:
 
 ### Changed mount point
 
-Prior to version 1.13.1, the recommended installation procedure was to mount directly to the `srv/bedrockserver/worlds folder`.  We now recommend mounting to the `/mcdata` folder, which should be up one level from your `worlds` folder.  See the instructions above and the new DockerFile.
+Prior to version 1.13.1, the recommended installation procedure was to mount directly to the `srv/bedrockserver/worlds` folder.  We now recommend mounting to the `/mcdata` folder, which should be up one level from your `worlds` folder.  See the instructions above and the new DockerFile.
 
 ### Changed user id
 

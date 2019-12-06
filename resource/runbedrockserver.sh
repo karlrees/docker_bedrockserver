@@ -9,11 +9,28 @@
 #
 ###########################################
 
+#previous version check
+if [[ -d "${MCSERVERFOLDER}/worlds" && ! -L "${MCSERVERFOLDER}/worlds" ]]
+then
+	echo -e "WARNING: This image may not work correctly, since an existing worlds folder was detected in ${MCSERVERFOLDER}.  This may be because you have upgraded from a pre-1.13.1 version of the docker image.  If you have problems, you can try: a) mounting the parent directory in which your worlds data is stored to /mcdata (preferred going forward, see README); b) 'chmod -R 777 *' in your worlds volume, or 'chown -R ${MCUSER}:${MCGROUP} *'; and/or c) running the karlrees/docker_bedrockserver:legacy image."
+	if [[ "${WORLD}" == "world" && -e "${MCSERVERFOLDER}/worlds/default" && ! -e "${MCSERVERFOLDER}/worlds/world" ]]
+	then
+		export WORLD="default"
+	fi
+fi
+
+
 echo "LINKING MINECRAFT DATA ..."
 
 file_lookup () {
   LOOKUP_FILE=$1
-  if [ -e "${MCVOLUME}/worlds/${WORLD}/${LOOKUP_FILE}" ]
+  if [ -e "${MCSERVERFOLDER}/worlds/${WORLD}/${LOOKUP_FILE}" ] 
+  then
+    echo "${MCSERVERFOLDER}/worlds/${WORLD}/${LOOKUP_FILE}"
+  elif [ -e "${MCSERVERFOLDER}/worlds/${WORLD}.properties" ] && [ ${LOOKUP_FILE} = "server.properties" ] 
+  then
+    echo "${MCSERVERFOLDER}/worlds/${WORLD}.properties"
+  elif [ -e "${MCVOLUME}/worlds/${WORLD}/${LOOKUP_FILE}" ]
   then
     echo "${MCVOLUME}/worlds/${WORLD}/${LOOKUP_FILE}"
   elif [ -e "${MCVOLUME}/${WORLD}.${LOOKUP_FILE}" ]
@@ -29,12 +46,6 @@ file_lookup () {
     echo "${MCVOLUME}/${LOOKUP_FILE}"
   fi
 }
-
-# if world folder does not exist, create it
-if [ ! -d "${MCVOLUME}/worlds/${WORLD}" ]
-then
- mkdir -p -- "${MCVOLUME}/worlds/${WORLD}"
-fi
 
 SERVER_FILE=`file_lookup "server.properties"`
 # If worldname.server.properties file is found, link to that
@@ -70,66 +81,63 @@ else
   done
 fi
 
-# Link permission and whilelist
-for f in permissions.json whitelist.json
+# Link/create files
+for f in permissions.json whitelist.json Debug_Log.txt valid_known_packs.json
 do
   LOOKUP_FILE=`file_lookup "${f}"`
   # If file doesn't exist create from minecraft default
 	if ! [ -f "${LOOKUP_FILE}" ]
 	then
-		cp ${MCSERVERFOLDER}/default/${f} ${LOOKUP_FILE}
+		if [ -f ${MCSERVERFOLDER}/default/${f} ] 
+		then
+			cp ${MCSERVERFOLDER}/default/${f} ${LOOKUP_FILE}
+		else
+		# if default file doesn't exist create empty
+			touch ${LOOKUP_FILE}
+		fi
 	fi
-	# (re)link directory
+	# (re)link file
 	rm -f -- ${MCSERVERFOLDER}/${f}	
 	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
 done
 
-# Link Debug_Log and valid_known_packs
-for f in Debug_Log.txt valid_known_packs.json
-do
-  LOOKUP_FILE=`file_lookup "${f}"`
-  # If file doesn't exist create empty
-	if ! [ -f "${LOOKUP_FILE}" ]
-	then
-		touch ${LOOKUP_FILE}
-	fi
-	# (re)link directory
-	rm -f -- ${MCSERVERFOLDER}/${f}	
-	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
-done
-
-# Link directories with defaults
-for f in behavior_packs definitions resource_packs structures worlds
+# Link/create directories
+for f in behavior_packs definitions resource_packs structures worlds development_behavior_packs development_resource_packs premium_cache treatments world_templates
 do
   LOOKUP_FILE=`file_lookup "${f}"`
   # if directory doesn't exist create from minecraft default
 	if ! [ -d "${LOOKUP_FILE}" ]
 	then
-		cp -a ${MCSERVERFOLDER}/default/${f} ${LOOKUP_FILE}
+		if [ -d ${MCSERVERFOLDER}/default/${f} ] 
+		then
+			cp -a ${MCSERVERFOLDER}/default/${f} ${LOOKUP_FILE}
+		else
+		# if default directory doesn't exist create empty
+			mkdir ${LOOKUP_FILE}
+			chmod g=u ${LOOKUP_FILE}
+		fi
 	fi
 	# (re)link directory
-	rm -f -- ${MCSERVERFOLDER}/${f}	
-	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
+	if [ ! -d ${MCSERVERFOLDER}/${f} ]
+	then
+		rm -f -- ${MCSERVERFOLDER}/${f}	
+		ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
+	fi
 done
 
-# Link directories without defaults
-for f in development_behavior_packs development_resource_packs premium_cache treatments world_templates
-do
-  LOOKUP_FILE=`file_lookup "${f}"`
-  # if directory doesn't exist create empty
-	if ! [ -d "${LOOKUP_FILE}" ]
-	then
-		mkdir ${LOOKUP_FILE}
-		chmod g=u ${LOOKUP_FILE}
-	fi
-	# (re)link directory
-	rm -f -- ${MCSERVERFOLDER}/${f}	
-	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
-done
+# if world folder does not exist, create it
+if [ ! -d "${MCSERVERFOLDER}/worlds/${WORLD}" ]
+then
+ mkdir -p -- "${MCSERVERFOLDER}/worlds/${WORLD}"
+fi
 
 echo "STARTING BEDROCKSERVER: ${WORLD} on ${HOSTNAME}:${MCPORT} ..."
 
-mkfifo /tmp/mc-input
+if ! [ -e "/tmp/mc-input" ] 
+then
+	mkfifo /tmp/mc-input
+fi
+
 MC_INPUT_PID=$!
 
 ########### SIG handler ############
