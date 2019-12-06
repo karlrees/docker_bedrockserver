@@ -62,7 +62,7 @@ Unfortunately, I can't get this to work with an external volume on Windows.  For
 7. Start the docker container as shown below, replacing "worldname" with whatever your "world" folder is named, and "/path/to/world/folder" with the absolute path to your parent worlds folder:
 
 ```
-docker run -e WORLD=worldname -v /path/to/worlds/folder:/srv/mcpeserver/worlds -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
+docker run -e WORLD=worldname -v /path/to/worlds/folder:/srv/bedrockserver/worlds -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver
 ```
 
 ### Multiple existing worlds / docker-compose
