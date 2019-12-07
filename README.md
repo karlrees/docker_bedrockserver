@@ -359,8 +359,8 @@ Second, I've seen this error when there is a permission problem with some or all
 If you have problems after updating to 1.13.1, it is most likely related to permissions.  A quick and dirty solution may be to go into your worlds volume and run either `chmod -R 777 *`, or `chown -R 1132:1132 *`.  An even more quick and dirty solution would be to run the legacy branch instead.  For instance:
 
 ```
-docker pull karlrees/docker_bedrockserver:latest
-docker run -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver:latest
+docker pull karlrees/docker_bedrockserver:legacy
+docker run -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver:legacy
 ```
 
 Of course, the most preferred solution (and most likely to be supported going forward) would be to start mounting the mcdata volume instead of the worlds folder, as described elsewehere herein.
