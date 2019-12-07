@@ -363,7 +363,7 @@ docker pull karlrees/docker_bedrockserver:latest
 docker run -dit --name="minecraft" --network="host" karlrees/docker_bedrockserver:latest
 ```
 
-Of course, the most preferred solution (and most likely to be supported going forward) would be to start mounting the mcdata volume instead, as described elsewehere herein.
+Of course, the most preferred solution (and most likely to be supported going forward) would be to start mounting the mcdata volume instead of the worlds folder, as described elsewehere herein.
 
 A few changes in the update that you may or may not need to be aware of:
 

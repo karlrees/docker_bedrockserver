@@ -9,25 +9,12 @@
 #
 ###########################################
 
-#previous version check
-if [[ -d "${MCSERVERFOLDER}/worlds" && ! -L "${MCSERVERFOLDER}/worlds" ]]
-then
-	echo -e "WARNING: This image may not work correctly, since an existing worlds folder was detected in ${MCSERVERFOLDER}.  This may be because you have upgraded from a pre-1.13.1 version of the docker image.  If you have problems, you can try: a) mounting the parent directory in which your worlds data is stored to /mcdata (preferred going forward, see README); b) 'chmod -R 777 *' in your worlds volume, or 'chown -R ${MCUSER}:${MCGROUP} *'; and/or c) running the karlrees/docker_bedrockserver:legacy image."
-	if [[ "${WORLD}" == "world" && -e "${MCSERVERFOLDER}/worlds/default" && ! -e "${MCSERVERFOLDER}/worlds/world" ]]
-	then
-		export WORLD="default"
-	fi
-fi
-
-
-echo "LINKING MINECRAFT DATA ..."
-
 file_lookup () {
   LOOKUP_FILE=$1
-  if [ -e "${MCSERVERFOLDER}/worlds/${WORLD}/${LOOKUP_FILE}" ] 
+  if [ -e "${MCSERVERFOLDER}/worlds/${WORLD}/${LOOKUP_FILE}" ]
   then
     echo "${MCSERVERFOLDER}/worlds/${WORLD}/${LOOKUP_FILE}"
-  elif [ -e "${MCSERVERFOLDER}/worlds/${WORLD}.properties" ] && [ ${LOOKUP_FILE} = "server.properties" ] 
+  elif [ -e "${MCSERVERFOLDER}/worlds/${WORLD}.properties" ] && [ ${LOOKUP_FILE} = "server.properties" ]
   then
     echo "${MCSERVERFOLDER}/worlds/${WORLD}.properties"
   elif [ -e "${MCVOLUME}/worlds/${WORLD}/${LOOKUP_FILE}" ]
@@ -47,13 +34,30 @@ file_lookup () {
   fi
 }
 
+#previous version check
+if [[ -d "${MCSERVERFOLDER}/worlds" && ! -L "${MCSERVERFOLDER}/worlds" ]]
+then
+	echo -e "WARNING: This image may not work correctly, since an existing worlds folder was detected in ${MCSERVERFOLDER}.  This may be because you have upgraded from a pre-1.13.1 version of the docker image.  If you have problems, you can try: a) mounting the parent directory in which your worlds data is stored to /mcdata (preferred going forward, see README); b) 'chmod -R 777 *' in your worlds volume, or 'chown -R ${MCUSER}:${MCGROUP} *'; and/or c) running the karlrees/docker_bedrockserver:legacy image."
+	if [[ "${WORLD}" == "world" && -e "${MCSERVERFOLDER}/worlds/default" && ! -e "${MCSERVERFOLDER}/worlds/world" ]]
+	then
+		export WORLD="default"
+	fi
+fi
+
+
+echo "LINKING MINECRAFT DATA ..."
+
+# remove any existing server.properties file or link from MCSERVERFOLDER
+if [ -f ${MCSERVERFOLDER}/server.properties ] || [ -L ${MCSERVERFOLDER}/server.properties ]
+then
+  rm -f -- ${MCSERVERFOLDER}/server.properties
+fi
+# If file lookup finds existing server.properties file, link to that
 SERVER_FILE=`file_lookup "server.properties"`
-# If worldname.server.properties file is found, link to that
 if [ -f ${SERVER_FILE} ]
 then
-  # (re)link server.properties file
-  rm -f -- ${MCSERVERFOLDER}/server.properties
   ln -s ${SERVER_FILE} ${MCSERVERFOLDER}/server.properties
+  echo "Using server config from: ${SERVER_FILE}"
 else
   echo "Generating server configuration:"
   # create base for server.properties
@@ -97,8 +101,14 @@ do
 		fi
 	fi
 	# (re)link file
-	rm -f -- ${MCSERVERFOLDER}/${f}	
-	ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
+	if [ -L ${MCSERVERFOLDER}/${f} ]
+	then
+		rm -f -- ${MCSERVERFOLDER}/${f}	
+	fi
+	if [ ! -f ${MCSERVERFOLDER}/${f} ]
+	then
+		ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
+	fi
 done
 
 # Link/create directories
@@ -118,9 +128,12 @@ do
 		fi
 	fi
 	# (re)link directory
-	if [ ! -d ${MCSERVERFOLDER}/${f} ]
+	if [ -L ${MCSERVERFOLDER}/${f} ]
 	then
 		rm -f -- ${MCSERVERFOLDER}/${f}	
+	fi
+	if [ ! -d ${MCSERVERFOLDER}/${f} ]
+	then
 		ln -s ${LOOKUP_FILE} ${MCSERVERFOLDER}/${f}
 	fi
 done
@@ -130,6 +143,7 @@ if [ ! -d "${MCSERVERFOLDER}/worlds/${WORLD}" ]
 then
  mkdir -p -- "${MCSERVERFOLDER}/worlds/${WORLD}"
 fi
+
 
 echo "STARTING BEDROCKSERVER: ${WORLD} on ${HOSTNAME}:${MCPORT} ..."
 
