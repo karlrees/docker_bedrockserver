@@ -53,4 +53,4 @@ fi
 
 
 echo -e "\nEverything is now in place to run the docker bedrock servers.\n------------------------------------------------------------------\n"
-echo -e "To start the servers:\n\n   cd ${R}\n   docker-compose up -d\n\n\nTo stop the servers:\n\n   cd ${R}\n   docker-compose down -d\n\n\nTo configure your own servers, edit the docker-compose.yml file.  See the README file for more information.\n\n"
+echo -e "To start the servers:\n\n   cd ${R}\n   docker-compose up -d\n\n\nTo stop the servers:\n\n   cd ${R}\n   docker-compose down\n\n\nTo configure your own servers, edit the docker-compose.yml file.  See the README file for more information.\n\n"
