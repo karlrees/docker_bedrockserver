@@ -15,7 +15,7 @@ ARG MCGROUP
 ENV MCUSER=${MCUSER:-1132}
 ENV MCGROUP=${MCGROUP:-1132}
 ENV MCPORT=${MCPORT:-19132}
-ENV INSTALLERURL=${INSTALLERURL:-"https://minecraft.azureedge.net/bin-linux/bedrock-server-1.13.1.5.zip"}
+ENV INSTALLERURL=${INSTALLERURL:-"https://minecraft.azureedge.net/bin-linux/bedrock-server-1.14.0.9.zip"}
 
 # setup environment
 ENV container=docker
