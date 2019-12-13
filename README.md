@@ -282,7 +282,7 @@ docker-compose up
 
 ## Minecraft Server updates
 
-By default, the image will check for an updated version of the Minecraft server on restart.  So all you need to do is restart your image(s).  So for a single-server, assuming your image name is minecraft:
+By default, the image will check for an updated version of the Minecraft server on restart.  So all you need to do is restart your image(s).  So for a single-server install, assuming your image name is minecraft:
 
 ```
 docker restart minecraft
@@ -302,7 +302,7 @@ Automatic updates may be disabled in one of two ways.  First, you can delete the
 docker exec minecraft rm "/srv/bedrockserver/.AUTOUPDATE"
 ```
 
-Second, you could disabled auto-updates by setting the `AUTOUPDATE` build argument to `0` when building the docker image (which keeps the .AUTOUPDATE file from being created).  For instance:
+Second, you could disable auto-updates by setting the `AUTOUPDATE` build argument to `0` when building the docker image (which keeps the .AUTOUPDATE file from being created).  For instance:
 
 ```
 docker build --build-arg AUTOUPDATE=0 -t karlrees/docker_bedrockserver:beta .
