@@ -12,12 +12,13 @@ The Minecraft data may further be exposed to your host, so that you can easily b
 
 ## Version History
 
+- 1.14 (Dec 2019): Added automatic updating of minecraft server on image restart
 - 1.13.1 (Nov 2019): Major revisions to architecture, including running under a different user and expanded custom resource file/directory support
 - 0.1.12 (10 Jul 2019): Custom permission file support
 - 0.1.8.2 (16 Dec 2018): Bump Minecraft version number
 - Initial release (17 Oct 2018)
 
-*For updating to version 1.13.1, see [Updating to Version 1.13.1](#updating-to-version-1131).*
+*For updating from pre-1.13.1 versions, see [Updating from Pre-1.13.1 Versions](#updating-from-pre-1131-versions).*
 
 ## Prerequisites
 
@@ -281,7 +282,56 @@ docker-compose up
 
 ## Minecraft Server updates
 
-For new updates to the server, first remove the existing containers.  Then pull the update, and run the container again.  To do this:
+By default, the image will check for an updated version of the Minecraft server on restart.  So all you need to do is restart your image(s).  So for a single-server, assuming your image name is minecraft:
+
+```
+docker restart minecraft
+``` 
+
+For multiple servers using docker-compose:
+
+```
+docker-compose restart
+```
+
+### Disabling automatic updates
+
+Automatic updates may be disabled in one of two ways.  First, you can delete the `$MCSERVERFOLDER/.AUTOUPDATE` file.  For instance, if your image name is minecraft:
+
+```
+docker exec minecraft rm "/srv/bedrockserver/.AUTOUPDATE"
+```
+
+Second, you could disabled auto-updates by setting the `AUTOUPDATE` build argument to `0` when building the docker image (which keeps the .AUTOUPDATE file from being created).  For instance:
+
+```
+docker build --build-arg AUTOUPDATE=0 -t karlrees/docker_bedrockserver:beta .
+```
+
+### Forcing updates
+
+If auto-updates are disabled, you can still force a minecraft server update using the `updatebedrockserver.sh` script.  For instance, if your image name is minecraft:
+
+```
+docker exec minecraft /srv/bedrockserver/updatebedrockserver.sh
+docker restart minecraft
+```
+
+### Forcing updates to a specific version
+
+You can force an update to a specific version by adding the version number to the end of the update script.  E.g.:
+
+```
+docker exec minecraft /srv/bedrockserver/updatebedrockserver.sh 1.14.0.9
+docker restart minecraft
+```
+
+Alternatively, you can use the `VERSION` build argument when building the image.
+
+
+## Updating the Docker Image
+
+To keep up to date with the latest features, you may need to update the docker image from time to time.  To update the image, first remove the existing containers.  Then pull the update, and run the container again.  To do this:
 
 ### If you are pulling the docker image directly (basic single-server installs)
 
@@ -354,9 +404,9 @@ This could be one of two things.  First, the obvious issue could be that you are
 
 Second, I've seen this error when there is a permission problem with some or all of the resource files when you are mounting an external volume to the `mcdata` folder.  The solution is to make sure that the user id (the specific number--e.g. 1132) of all of your files is the same as being used in the container.  See above.
 
-## Updating to version 1.13.1
+## Updating from pre-1.13.1 versions
 
-If you have problems after updating to 1.13.1, it is most likely related to permissions.  A quick and dirty solution may be to go into your worlds volume and run either `chmod -R 777 *`, or `chown -R 1132:1132 *`.  An even more quick and dirty solution would be to run the legacy branch instead.  For instance:
+If you have problems after updating to a 1.13.1 image or higher, it is most likely related to permissions.  A quick and dirty solution may be to go into your worlds volume and run either `chmod -R 777 *`, or `chown -R 1132:1132 *`.  An even more quick and dirty solution would be to run the legacy branch instead.  For instance:
 
 ```
 docker pull karlrees/docker_bedrockserver:legacy

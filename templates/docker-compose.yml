@@ -12,10 +12,12 @@ x-mcserver-common:
   build: 
    context: .
    args:
-    INSTALLERURL: ${INSTALLERURL:-}
+    INSTALLERBASE: ${INSTALLERBASE:-}
+    VERSION: ${VERSION:-}
     MCUSER: ${MCUSER:-}
     MCGROUP: ${MCGROUP:-}
     MCPORT: ${MCPORT:-}
+    AUTOUPDATE: ${AUTOUPDATE:-}
   volumes:
   - ${MCVOLUME:-./mcdata}:/mcdata
   restart: unless-stopped
