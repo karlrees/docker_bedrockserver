@@ -390,6 +390,25 @@ docker build --build-arg MCUSER=1000 --build-arg MCGROUP=1000 -t karlrees/docker
 
 *Be sure to use a numeric id, not a display name like root or user.*
 
+## Using a MacOS host
+
+*Thanks to @Shawnfreebern for these instructions.*
+
+According to docker docs:
+
+> The host networking driver only works on Linux hosts, and is not supported on Docker Desktop for Mac ...
+
+The result is that you have to specify which ports to publish on MacOS. For a remote server you can (possibly) get away with publishing only your chosen server port (19132) but for LAN games minecraft opens a second randomly chosen port which you need to publish, but can't because you don't know the number when you start the container.
+
+Docker has a `--publish-all` function but it doesn't seem to work:
+
+it appears to only publish ports opened early in the container start process, and the LAN port is opened a bit later both TCP and UDP are required and it looks like `--publish-all` doesn't get that done it assigns known ports to randomly selected higher ports, which further complicates remote server access My solution at present is to artificially limit which random ports are available, and then specifically publish all port options for both TCP and UDP:
+
+```
+docker run --sysctl net.ipv4.ip_local_port_range="39132 39133" -p 19132:19132 -p 19132:19132/udp -p 39132:39132 -p 39132:39132/udp -p 39133:39133 -p 39133:39133/udp --name="minecraft" etc
+```
+Someone will hopefully find a better way to do this (I am not a docker, minecraft, or mac networking expert) but until that's discovered this might be helpful to other mac users.
+
 ## Using a Windows host
 
 The above instructions assume you are running on a Linux-based host.  You can also run the containers on a Windows-based host.  However, because of differences in how Windows-based hosts handle networking, you won't by default have access to the servers on your LAN.
@@ -441,5 +460,6 @@ Also, git is now configured to ignore the `.env` file (and `docker-compose.yml`)
 
 - @karlrees - original author and maintainer
 - @ParFlesh - the guy who actually knows his way around Linux
+- @eithe - Got the ball rolling on auto-updates
 
-Additional contributions from: @eithe, @rsnodgrass, @RemcoHulshof, @tsingletonacic, and probably others I lost track of.  Thanks!
+Additional contributions from: @Shawnfreebern, @rsnodgrass, @RemcoHulshof, @tsingletonacic, and probably others I lost track of.  Thanks!
