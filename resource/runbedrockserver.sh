@@ -34,6 +34,18 @@ file_lookup () {
   fi
 }
 
+echo -e "Minecraft Bedrock Server startup script"
+echo -e "---------------------------------------\n\n"
+
+#update check
+if [ -e ${MCSERVERFOLDER}/.AUTOUPDATE ]
+then
+	${MCSERVERFOLDER}/updatebedrockserver.sh
+else
+	echo -e "Automatic updates are disabled."
+fi
+
+
 #previous version check
 if [[ -d "${MCSERVERFOLDER}/worlds" && ! -L "${MCSERVERFOLDER}/worlds" ]]
 then

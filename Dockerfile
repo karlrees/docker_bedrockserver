@@ -9,13 +9,18 @@ RUN apt update && \
 
 # build arguments
 ARG MCPORT
+ARG INSTALLERBASE
 ARG INSTALLERURL
 ARG MCUSER
 ARG MCGROUP
+ARG VERSION
+ARG AUTOUPDATE
 ENV MCUSER=${MCUSER:-1132}
 ENV MCGROUP=${MCGROUP:-1132}
 ENV MCPORT=${MCPORT:-19132}
-ENV INSTALLERURL=${INSTALLERURL:-"https://minecraft.azureedge.net/bin-linux/bedrock-server-1.14.0.9.zip"}
+ENV VERSION=${VERSION:-"1.14.0.9"}
+ENV INSTALLERBASE=${INSTALLERBASE:-"https://minecraft.azureedge.net/bin-linux/bedrock-server-"}
+ENV AUTOUPDATE=${AUTOUPDATE:-1}
 
 # setup environment
 ENV container=docker
@@ -27,26 +32,26 @@ ENV PATH $PATH:${MCSERVERFOLDER}
 # open the server port
 EXPOSE $MCPORT
 
-# install minecraft
-RUN curl $INSTALLERURL --output mc.zip && \
-  unzip mc.zip -d $MCSERVERFOLDER && \
-  rm mc.zip && \
-  mkdir $MCSERVERFOLDER/default $MCVOLUME && \
-  chown -Rf $MCUSER:$MCGROUP $MCSERVERFOLDER $MCVOLUME && \
-  chmod -Rf g=u $MCSERVERFOLDER $MCVOLUME && \
-  rm ${MCSERVERFOLDER}/server.properties && \
-  for i in permissions.json whitelist.json behavior_packs definitions resource_packs structures;do mv $MCSERVERFOLDER/$i $MCSERVERFOLDER/default/$i;done
+# make dirs
+RUN mkdir -p $MCSERVERFOLDER/default $MCVOLUME
 
-# create folder for minecraft resources
-VOLUME $MCVOLUME
+# copy resource files over
+COPY resource/* $MCSERVERFOLDER/
 
-# set up startup script
-COPY resource/runbedrockserver.sh $MCSERVERFOLDER
-RUN chmod +x $MCSERVERFOLDER/runbedrockserver.sh && \
-  chmod -Rf g=u $MCSERVERFOLDER/runbedrockserver.sh && \
-  chown $MCUSER:$MCGROUP $MCSERVERFOLDER/runbedrockserver.sh
+# fix permissions
+RUN chown -Rf $MCUSER:$MCGROUP $MCSERVERFOLDER $MCVOLUME && \
+    chmod -Rf g=u $MCSERVERFOLDER $MCVOLUME && \
+    chmod +x $MCSERVERFOLDER/*.sh
 
 # set default user to minecraft user
 USER $MCUSER:$MCGROUP
+
+# create volume for minecraft resources
+VOLUME $MCVOLUME
+
+# install bedrock server
+RUN if [ $AUTOUPDATE = 1 ]; then touch $MCSERVERFOLDER/.AUTOUPDATE; fi && \
+    $MCSERVERFOLDER/installbedrockserver.sh $VERSION
+
 
 CMD ["runbedrockserver.sh"]
