@@ -255,7 +255,7 @@ docker attach minecraft
 
 If you changed the container name in the run command, change `minecraft` to the container name you used.  If you're using docker-compose instructions, replace `minecraft` with the container name you specified in the `docker-compose.yml` file (e.g. `minecraft1`, `minecraft2`, etc.).
 
-You can then issue server commands, like `stop`, `permissions list`, etc.
+You can then issue server commands, like `stop`, `permission list`, etc.
 
 To exit, enter `Ctrl-P` followed by `Ctrl-Q`.
 
