@@ -85,6 +85,8 @@ else
   # Examples
   #  - MCPROP_ALLOW_CHEATS=true
   #    allow-cheats=true
+  SAVEIFS="$IFS"
+  IFS=$'\n'
   for P in `printenv | grep '^MCPROP_'`
   do
     PROP_NAME=${P%%=*}
@@ -95,6 +97,7 @@ else
     echo -e "\t${PROP_NAME}=${PROP_VALUE}"
     echo "${PROP_NAME}=${PROP_VALUE}" >> ${MCSERVERFOLDER}/server.properties
   done
+  IFS="$SAVEIFS"
 fi
 
 # Link/create files
