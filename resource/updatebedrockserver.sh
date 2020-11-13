@@ -14,7 +14,7 @@ then
 	INSTALL_VERSION=$1
 else
         LATEST_VERSION=$( \
-            curl -v --silent  https://www.minecraft.net/en-us/download/server/bedrock/ 2>&1 | \
+            curl -v --silent  https://www.minecraft.net/en-us/download/server/bedrock 2>&1 | \
             grep -o 'https://minecraft.azureedge.net/bin-linux/[^"]*' | \
             sed 's#.*/bedrock-server-##' | sed 's/.zip//') && \
 	echo "Latest VERSION is $LATEST_VERSION" && \
