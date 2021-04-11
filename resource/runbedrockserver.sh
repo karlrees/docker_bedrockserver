@@ -192,6 +192,7 @@ trap _int SIGKILL
 
 # cd to bin folder and exec to bedrock_server
 cd /${MCSERVERFOLDER}/
+chmod +x bedrock_server
 LD_LIBRARY_PATH=. tail -f /tmp/mc-input | bedrock_server &
 childPID=$!
 while read line
