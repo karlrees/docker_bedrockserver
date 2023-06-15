@@ -17,7 +17,7 @@ then
 	echo $1 > $MCSERVERFOLDER/.CURRENTVERSION && \
 	rm -rf $MCSERVERFOLDER/default/* && \
 	rm $MCSERVERFOLDER/server.properties && \
-	for i in permissions.json whitelist.json behavior_packs definitions resource_packs structures;do mv $MCSERVERFOLDER/$i $MCSERVERFOLDER/default/$i;done
+	for i in permissions.json allowlist.json behavior_packs definitions resource_packs;do mv $MCSERVERFOLDER/$i $MCSERVERFOLDER/default/$i;done
 else
 	echo -e "No version specified.  Please specify version.  E.g.\n\n\tinstallbedrockserver.sh 1.14.0.9"
 fi
