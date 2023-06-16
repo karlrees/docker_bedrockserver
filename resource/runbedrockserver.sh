@@ -101,7 +101,7 @@ else
 fi
 
 # Link/create files
-for f in permissions.json whitelist.json Debug_Log.txt valid_known_packs.json
+for f in permissions.json allowlist.json Debug_Log.txt valid_known_packs.json
 do
   LOOKUP_FILE=`file_lookup "${f}"`
   # If file doesn't exist create from minecraft default

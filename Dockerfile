@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:22.04
 
 # install dependencies
 RUN apt update && \
@@ -18,7 +18,7 @@ ARG AUTOUPDATE
 ENV MCUSER=${MCUSER:-1132}
 ENV MCGROUP=${MCGROUP:-1132}
 ENV MCPORT=${MCPORT:-19132}
-ENV VERSION=${VERSION:-"1.17.10.04"}
+ENV VERSION=${VERSION:-"1.20.0.01"}
 ENV INSTALLERBASE=${INSTALLERBASE:-"https://minecraft.azureedge.net/bin-linux/bedrock-server-"}
 ENV AUTOUPDATE=${AUTOUPDATE:-1}
 
